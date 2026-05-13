@@ -270,6 +270,22 @@ header p  { font-size:.88rem; opacity:.8; margin-top:5px; position:relative; }
 /* ── CONFIRM MODAL ── */
 #confirmModal .modal { border-top-color:var(--red); }
 
+/* ── CARD STYLE MODAL ── */
+#cardStyleModal .modal { max-width:520px; border-top-color:#8e44ad; }
+#cardStyleModal h3 { color:#8e44ad; }
+.card-style-grid { display:grid; grid-template-columns:1fr; gap:14px; margin-top:14px; }
+.card-style-grid .form-group label { color:#8e44ad; }
+.card-style-grid input, .card-style-grid textarea {
+  padding:9px 12px; border:2px solid #e8d5f5; border-radius:9px;
+  font-family:inherit; font-size:.88rem; background:#fafafa; transition:border-color .2s;
+  width:100%;
+}
+.card-style-grid input:focus, .card-style-grid textarea:focus {
+  outline:none; border-color:#8e44ad; box-shadow:0 0 0 3px rgba(142,68,173,.1);
+}
+.btn-purple { background:#f5eeff; color:#8e44ad; border:1.5px solid #d7aefb; }
+.btn-purple:hover { background:#8e44ad; color:white; }
+
 ::-webkit-scrollbar { width:5px; }
 ::-webkit-scrollbar-thumb { background:var(--red); border-radius:3px; }
 </style>
@@ -327,6 +343,7 @@ header p  { font-size:.88rem; opacity:.8; margin-top:5px; position:relative; }
   <div class="section">
     <div class="sec-hdr">
       <h2>🃏 Tarjetas (8 en total)</h2>
+      <button class="btn btn-purple" onclick="openCardStyleModal()">🎴 Estilo de tarjetas</button>
       <button class="btn btn-danger" onclick="confirmClearCards()">🗑 Limpiar todas las tarjetas</button>
     </div>
     <div class="cards-grid" id="cardsGrid"></div>
@@ -366,6 +383,37 @@ header p  { font-size:.88rem; opacity:.8; margin-top:5px; position:relative; }
     <div class="modal-btns">
       <button class="btn btn-ghost" onclick="closeModal('warnModal')">← Volver a corregir</button>
       <button class="btn btn-danger" id="btnContinueAnyway">Generar igual →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL ESTILO DE TARJETAS ═══ -->
+<div class="modal-overlay" id="cardStyleModal">
+  <div class="modal">
+    <div class="modal-icon">🎴</div>
+    <h3>Estilo de Tarjetas</h3>
+    <p>Personalizá cómo se describe cada tarjeta en el prompt.</p>
+    <div class="card-style-grid">
+      <div class="form-group">
+        <label>Marco y fondo</label>
+        <input type="text" id="cs_marco" placeholder="Ej: Marco rectangular con fondo crema y borde marrón ornamentado">
+      </div>
+      <div class="form-group">
+        <label>Color del título</label>
+        <input type="text" id="cs_titulo" placeholder="Ej: Título arriba en color (verde, rojo o negro según corresponda)">
+      </div>
+      <div class="form-group">
+        <label>Ilustración</label>
+        <input type="text" id="cs_ilus" placeholder="Ej: Ilustración caricaturesca central">
+      </div>
+      <div class="form-group">
+        <label>Número / círculo</label>
+        <input type="text" id="cs_numero" placeholder="Ej: Número de 2 dígitos abajo en círculo azul con borde dorado">
+      </div>
+    </div>
+    <div class="modal-btns">
+      <button class="btn btn-ghost" onclick="resetCardStyle()">↺ Restaurar original</button>
+      <button class="btn btn-purple" onclick="saveCardStyleAndClose()">✅ Guardar</button>
     </div>
   </div>
 </div>
@@ -415,6 +463,13 @@ const DEFAULT_VISUAL = {
   notas: ""
 };
 
+const DEFAULT_CARD_STYLE = {
+  marco:  "Marco rectangular con fondo crema y borde marrón ornamentado",
+  titulo: "Título arriba en color (verde, rojo o negro según corresponda)",
+  ilus:   "Ilustración caricaturesca central",
+  numero: "Número de 2 dígitos abajo en círculo azul con borde dorado"
+};
+
 /* ══════════════════════════════════════════
    STORAGE
 ══════════════════════════════════════════ */
@@ -441,6 +496,13 @@ function saveAll() {
     fondo:  g("vis_fondo"),
     estilo: g("vis_estilo"),
     notas:  g("vis_notas"),
+  };
+  // card style
+  d.cs = {
+    marco:  g("cs_marco"),
+    titulo: g("cs_titulo"),
+    ilus:   g("cs_ilus"),
+    numero: g("cs_numero"),
   };
   localStorage.setItem("ag217", JSON.stringify(d));
 }
@@ -586,6 +648,30 @@ function resetVisual() {
   saveAll();
 }
 
+/* ══════════════════════════════════════════
+   CARD STYLE MODAL
+══════════════════════════════════════════ */
+function loadCardStyle(cs) {
+  const s = cs || DEFAULT_CARD_STYLE;
+  document.getElementById("cs_marco").value  = s.marco  || DEFAULT_CARD_STYLE.marco;
+  document.getElementById("cs_titulo").value = s.titulo || DEFAULT_CARD_STYLE.titulo;
+  document.getElementById("cs_ilus").value   = s.ilus   || DEFAULT_CARD_STYLE.ilus;
+  document.getElementById("cs_numero").value = s.numero || DEFAULT_CARD_STYLE.numero;
+}
+
+function openCardStyleModal() {
+  document.getElementById("cardStyleModal").classList.add("active");
+}
+
+function resetCardStyle() {
+  loadCardStyle(DEFAULT_CARD_STYLE);
+}
+
+function saveCardStyleAndClose() {
+  saveAll();
+  closeModal("cardStyleModal");
+}
+
 ["vis_fondo","vis_estilo","vis_notas"].forEach(id => {
   document.getElementById(id)?.addEventListener("input", saveAll);
 });
@@ -603,10 +689,12 @@ function resetVisual() {
     buildCards(saved.cards);
     buildAtrasados(saved.at);
     loadVisual(saved.vis);
+    loadCardStyle(saved.cs);
   } else {
     buildCards(null);
     buildAtrasados(null);
     loadVisual(null);
+    loadCardStyle(null);
   }
 })();
 
@@ -743,10 +831,10 @@ ENCABEZADO (parte superior):
 
 CUERPO PRINCIPAL - 8 TARJETAS (2 filas de 4):
 Cada tarjeta tiene:
-- Marco rectangular con fondo crema y borde marrón ornamentado
-- Título arriba en color (verde, rojo o negro según corresponda)
-- Ilustración caricaturesca central
-- Número de 2 dígitos abajo en círculo azul con borde dorado
+- ${g("cs_marco")  || DEFAULT_CARD_STYLE.marco}
+- ${g("cs_titulo") || DEFAULT_CARD_STYLE.titulo}
+- ${g("cs_ilus")   || DEFAULT_CARD_STYLE.ilus}
+- ${g("cs_numero") || DEFAULT_CARD_STYLE.numero}
 
 FILA 1:
 ${fila1.trimEnd()}
