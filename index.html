@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Generador — Agencia 217</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --red: #c0392b; --red-dark: #922b21;
+  --gold: #f39c12; --gold-light: #fdeaa8;
+  --blue: #1a6eb5; --green: #27ae60;
+  --cream: #fffdf5; --dark: #2c3e50;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Poppins', 'Segoe UI', sans-serif;
+  background: radial-gradient(ellipse at top, #3d0a00 0%, #1a0500 60%, #0d0200 100%);
+  min-height: 100vh;
+  color: var(--dark);
+}
+
+/* ── HEADER ── */
+header {
+  background: linear-gradient(135deg, #8e1a0e 0%, #c0392b 40%, #e74c3c 60%, #c0392b 80%, #8e1a0e 100%);
+  background-size: 300% 300%;
+  animation: hdrShift 6s ease infinite;
+  color: white;
+  text-align: center;
+  padding: 28px 20px 22px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.5);
+}
+@keyframes hdrShift {
+  0%,100%{background-position:0% 50%} 50%{background-position:100% 50%}
+}
+header::before, header::after {
+  content: "🎰";
+  position: absolute;
+  font-size: 7rem;
+  opacity: 0.07;
+  animation: floatEmoji 7s ease-in-out infinite;
+}
+header::before { top:-15px; left:-10px; }
+header::after  { bottom:-15px; right:-10px; animation-direction:reverse; }
+@keyframes floatEmoji {
+  0%,100%{transform:translateY(0) rotate(-5deg)} 50%{transform:translateY(-12px) rotate(5deg)}
+}
+header h1 { font-size:2rem; font-weight:900; letter-spacing:2px; text-shadow:2px 2px 10px rgba(0,0,0,0.4); position:relative; }
+header p  { font-size:.88rem; opacity:.8; margin-top:5px; position:relative; }
+
+.gold-stripe {
+  height: 6px;
+  background: linear-gradient(90deg, #8e6a00, #f39c12, #ffe066, #f39c12, #8e6a00);
+  background-size: 300%;
+  animation: goldShimmer 2.5s linear infinite;
+}
+@keyframes goldShimmer { 0%{background-position:0%} 100%{background-position:300%} }
+
+/* ── CONTAINER ── */
+.container { max-width:960px; margin:0 auto; padding:28px 16px 80px; }
+
+/* ── SECTION CARD ── */
+.section {
+  background: white;
+  border-radius: 18px;
+  padding: 22px 24px;
+  margin-bottom: 22px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.13);
+  border-top: 5px solid var(--red);
+  animation: slideUp .4s ease both;
+  transition: transform .2s, box-shadow .2s;
+}
+.section:hover { transform:translateY(-2px); box-shadow:0 12px 36px rgba(0,0,0,0.16); }
+@keyframes slideUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+.section:nth-child(2){animation-delay:.05s}
+.section:nth-child(3){animation-delay:.1s}
+.section:nth-child(4){animation-delay:.15s}
+.section:nth-child(5){animation-delay:.2s}
+
+.sec-hdr {
+  display:flex; justify-content:space-between; align-items:center;
+  flex-wrap:wrap; gap:10px; margin-bottom:18px;
+  padding-bottom:12px; border-bottom:2px dashed #f0e0c0;
+}
+.sec-hdr h2 {
+  font-size:.95rem; font-weight:700; text-transform:uppercase;
+  letter-spacing:1.5px; color:var(--red);
+  display:flex; align-items:center; gap:8px;
+}
+.sec-hdr-btns { display:flex; gap:8px; flex-wrap:wrap; }
+
+/* ── BUTTONS ── */
+.btn {
+  padding:7px 14px; border:none; border-radius:8px;
+  font-family:inherit; font-size:.78rem; font-weight:600;
+  cursor:pointer; transition:all .2s;
+  display:inline-flex; align-items:center; gap:5px;
+}
+.btn:active { transform:scale(.95); }
+.btn-danger  { background:#fff0ee; color:var(--red); border:1.5px solid #f5c6c2; }
+.btn-danger:hover  { background:var(--red); color:white; }
+.btn-warning { background:#fff8e1; color:#b7770d; border:1.5px solid #fde68a; }
+.btn-warning:hover { background:var(--gold); color:white; }
+.btn-ghost   { background:#f5f5f5; color:#555; border:1.5px solid #e0e0e0; }
+.btn-ghost:hover { background:#e0e0e0; }
+
+.btn-generar {
+  display:block; width:100%;
+  padding:18px; margin-bottom:24px;
+  background:linear-gradient(135deg, var(--red), #8e1a0e, var(--red));
+  background-size:250%; color:white; border:none;
+  border-radius:14px; font-family:inherit; font-size:1.15rem;
+  font-weight:900; cursor:pointer; letter-spacing:2px;
+  text-transform:uppercase; transition:all .3s;
+  box-shadow:0 6px 22px rgba(192,57,43,.45);
+  animation:btnPulse 3s ease-in-out infinite;
+}
+.btn-generar:hover { background-position:right; transform:translateY(-2px); animation:none; box-shadow:0 10px 30px rgba(192,57,43,.55); }
+@keyframes btnPulse { 0%,100%{box-shadow:0 6px 22px rgba(192,57,43,.4)} 50%{box-shadow:0 6px 32px rgba(192,57,43,.7)} }
+
+/* ── FECHA ── */
+.fecha-row { display:flex; gap:14px; align-items:center; flex-wrap:wrap; }
+.fecha-row label { font-weight:600; color:#666; font-size:.9rem; }
+.fecha-row input[type="date"] {
+  padding:9px 14px; border:2px solid #e0e0e0; border-radius:10px;
+  font-size:.95rem; font-family:inherit; background:#fafafa; transition:border-color .2s;
+}
+.fecha-row input[type="date"]:focus { outline:none; border-color:var(--red); }
+.fecha-badge {
+  background:linear-gradient(135deg,var(--green),#1e8449); color:white;
+  padding:8px 20px; border-radius:25px; font-weight:700; font-size:.88rem;
+  letter-spacing:1px; box-shadow:0 3px 10px rgba(39,174,96,.3);
+}
+
+/* ── VISUAL CONFIG ── */
+.visual-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+@media(max-width:600px){ .visual-grid{grid-template-columns:1fr} }
+.form-group { display:flex; flex-direction:column; gap:5px; }
+.form-group label { font-size:.72rem; font-weight:700; color:#888; text-transform:uppercase; letter-spacing:.5px; }
+.form-group input, .form-group select, .form-group textarea {
+  padding:9px 12px; border:2px solid #e8e8e8; border-radius:9px;
+  font-family:inherit; font-size:.88rem; background:#fafafa; transition:border-color .2s, box-shadow .2s;
+}
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+  outline:none; border-color:var(--red); box-shadow:0 0 0 3px rgba(192,57,43,.1);
+}
+.form-group textarea { resize:vertical; min-height:64px; }
+
+/* ── CARDS GRID ── */
+.cards-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(198px,1fr)); gap:14px; }
+
+.card-item {
+  background:linear-gradient(160deg,#fffdf8,#fff7e6);
+  border:2px solid #e8d5a3; border-radius:14px; padding:14px;
+  transition:box-shadow .2s, transform .2s; position:relative;
+}
+.card-item:hover { box-shadow:0 6px 22px rgba(243,156,18,.2); transform:translateY(-3px); }
+
+.card-hdr { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+.card-badge {
+  background:linear-gradient(135deg,var(--blue),#1558a0); color:white;
+  border:2px solid var(--gold); border-radius:50%;
+  width:30px; height:30px; display:flex; align-items:center; justify-content:center;
+  font-weight:700; font-size:.82rem; box-shadow:0 2px 6px rgba(26,110,181,.3); flex-shrink:0;
+}
+.card-name { font-size:.68rem; font-weight:700; color:var(--red); text-transform:uppercase; letter-spacing:.4px; }
+
+.card-item label { display:block; font-size:.67rem; color:#999; margin:7px 0 3px; font-weight:700; text-transform:uppercase; letter-spacing:.3px; }
+.card-item input[type="text"], .card-item textarea {
+  width:100%; padding:6px 9px; border:1.5px solid #e0d5b0; border-radius:7px;
+  font-family:inherit; font-size:.83rem; background:white; transition:border-color .2s;
+}
+.card-item input[type="text"]:focus, .card-item textarea:focus { outline:none; border-color:var(--blue); }
+.card-item textarea { resize:vertical; min-height:44px; font-size:.76rem; }
+
+.num-row { display:flex; align-items:center; gap:7px; margin-top:4px; flex-wrap:wrap; }
+.num-input {
+  width:58px; text-align:center; font-size:1.05rem; font-weight:700;
+  color:var(--blue); border:2px solid var(--blue) !important;
+  border-radius:50px !important; padding:5px 4px !important; background:white;
+  font-family:inherit;
+}
+.num-input:focus { outline:none; border-color:var(--gold) !important; box-shadow:0 0 0 3px rgba(243,156,18,.2); }
+
+.btn-addnum {
+  width:26px; height:26px; border-radius:50%;
+  background:linear-gradient(135deg,var(--gold),#e67e22); color:white;
+  border:none; font-size:1rem; cursor:pointer; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  transition:all .2s; box-shadow:0 2px 6px rgba(243,156,18,.35);
+}
+.btn-addnum:hover { transform:scale(1.15); }
+.btn-addnum:disabled { opacity:.35; cursor:not-allowed; transform:none; }
+
+.btn-rmnum {
+  width:20px; height:20px; border-radius:50%;
+  background:#fff0ee; color:var(--red); border:1.5px solid #f5c6c2;
+  font-size:.8rem; cursor:pointer; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center; transition:all .2s;
+}
+.btn-rmnum:hover { background:var(--red); color:white; }
+
+/* ── ATRASADOS ── */
+.at-group {
+  background:linear-gradient(135deg,#f0f7ff,#e8f4ff);
+  border:2px solid #bee3f8; border-radius:12px; padding:13px 15px; margin-bottom:11px;
+  transition:box-shadow .2s;
+}
+.at-group:hover { box-shadow:0 4px 14px rgba(26,110,181,.12); }
+.at-hdr { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+.at-hdr h3 { font-size:.82rem; font-weight:700; color:var(--blue); text-transform:uppercase; letter-spacing:1px; }
+.nums-row { display:flex; gap:9px; flex-wrap:wrap; }
+.num-circle {
+  width:54px; padding:7px 4px; border:2px solid var(--blue); border-radius:50px;
+  text-align:center; font-size:.95rem; font-weight:700; color:var(--blue);
+  background:white; font-family:inherit; transition:border-color .2s, box-shadow .2s;
+}
+.num-circle:focus { outline:none; border-color:var(--gold); box-shadow:0 0 0 3px rgba(243,156,18,.2); }
+
+/* ── OUTPUT ── */
+.output-box {
+  display:none; background:white; border-radius:18px; padding:24px;
+  box-shadow:0 8px 32px rgba(0,0,0,.13); border-top:5px solid var(--green);
+  animation:slideUp .4s ease;
+}
+.output-box h2 { color:var(--green); margin-bottom:14px; font-size:.95rem; text-transform:uppercase; letter-spacing:1px; }
+.output-box textarea {
+  width:100%; min-height:400px; padding:14px; border:2px solid #e8e8e8;
+  border-radius:10px; font-size:.8rem; font-family:'Courier New',monospace;
+  background:#fafafa; resize:vertical; line-height:1.6;
+}
+.output-actions { display:flex; gap:12px; margin-top:14px; flex-wrap:wrap; }
+.btn-copiar {
+  padding:12px 28px; background:linear-gradient(135deg,var(--green),#1e8449);
+  color:white; border:none; border-radius:10px; font-family:inherit;
+  font-size:.95rem; font-weight:700; cursor:pointer; transition:all .2s;
+  box-shadow:0 4px 12px rgba(39,174,96,.3);
+}
+.btn-copiar:hover { filter:brightness(1.1); transform:translateY(-1px); }
+.btn-copiar.copiado { background:linear-gradient(135deg,#1a5276,#154360); }
+.tip-text { font-size:.73rem; color:#bbb; font-style:italic; margin-top:8px; }
+
+/* ── MODAL ── */
+.modal-overlay {
+  display:none; position:fixed; inset:0;
+  background:rgba(0,0,0,.6); backdrop-filter:blur(5px);
+  z-index:1000; align-items:center; justify-content:center;
+}
+.modal-overlay.active { display:flex; }
+.modal {
+  background:white; border-radius:20px; padding:32px 28px;
+  max-width:440px; width:90%; animation:modalIn .3s ease;
+  box-shadow:0 20px 60px rgba(0,0,0,.35); border-top:5px solid var(--gold);
+}
+@keyframes modalIn { from{opacity:0;transform:scale(.8) translateY(-20px)} to{opacity:1;transform:scale(1) translateY(0)} }
+.modal-icon { font-size:3rem; text-align:center; margin-bottom:10px; }
+.modal h3 { font-size:1.05rem; font-weight:700; text-align:center; color:var(--dark); margin-bottom:6px; }
+.modal p  { font-size:.85rem; color:#666; text-align:center; line-height:1.5; }
+.modal-list {
+  background:#fff8ee; border:1.5px solid #fde68a; border-radius:10px;
+  padding:11px 15px; margin:12px 0; font-size:.82rem; color:#666; line-height:1.9;
+  max-height:160px; overflow-y:auto;
+}
+.modal-btns { display:flex; gap:10px; margin-top:18px; justify-content:center; flex-wrap:wrap; }
+.modal-btns .btn { padding:10px 20px; font-size:.88rem; border-radius:10px; }
+
+/* ── CONFIRM MODAL ── */
+#confirmModal .modal { border-top-color:var(--red); }
+
+::-webkit-scrollbar { width:5px; }
+::-webkit-scrollbar-thumb { background:var(--red); border-radius:3px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🎰 AGENCIA 217</h1>
+  <p>Generador de Prompt para Boletín Diario</p>
+</header>
+<div class="gold-stripe"></div>
+
+<div class="container">
+
+  <!-- ═══ FECHA ═══ -->
+  <div class="section">
+    <div class="sec-hdr">
+      <h2>📅 Fecha del Boletín</h2>
+    </div>
+    <div class="fecha-row">
+      <label for="fechaInput">Fecha:</label>
+      <input type="date" id="fechaInput">
+      <span class="fecha-badge" id="fechaPreview">— — —</span>
+    </div>
+  </div>
+
+  <!-- ═══ CONFIGURACIÓN VISUAL ═══ -->
+  <div class="section">
+    <div class="sec-hdr">
+      <h2>🎨 Configuración Visual</h2>
+      <button class="btn btn-ghost" onclick="resetVisual()">↺ Reiniciar visual</button>
+    </div>
+    <div class="visual-grid">
+      <div class="form-group">
+        <label>Estilo de fondo</label>
+        <input type="text" id="vis_fondo" placeholder="Ej: crema/beige caricaturesco, ornamentado">
+      </div>
+      <div class="form-group">
+        <label>Estética general</label>
+        <select id="vis_estilo">
+          <option value="caricaturesco y colorido tipo boletín de agencia de quiniela">Caricaturesco / Quiniela</option>
+          <option value="moderno y colorido con ilustraciones flat">Moderno Flat</option>
+          <option value="retro y festivo con tipografía llamativa">Retro Festivo</option>
+          <option value="pop art con colores vibrantes">Pop Art</option>
+        </select>
+      </div>
+      <div class="form-group" style="grid-column:1/-1">
+        <label>Notas adicionales de estilo (opcional)</label>
+        <textarea id="vis_notas" placeholder="Ej: usar colores pastel, bordes redondeados, tipografía divertida..."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ TARJETAS ═══ -->
+  <div class="section">
+    <div class="sec-hdr">
+      <h2>🃏 Tarjetas (8 en total)</h2>
+      <button class="btn btn-danger" onclick="confirmClearCards()">🗑 Limpiar todas las tarjetas</button>
+    </div>
+    <div class="cards-grid" id="cardsGrid"></div>
+  </div>
+
+  <!-- ═══ ATRASADOS ═══ -->
+  <div class="section">
+    <div class="sec-hdr">
+      <h2>🔢 Números Atrasados</h2>
+    </div>
+    <div id="atrasadosContainer"></div>
+  </div>
+
+</div><!-- /container -->
+
+<div class="container" style="padding-top:0">
+  <button class="btn-generar" onclick="validateAndGenerate()">⚡ GENERAR PROMPT</button>
+
+  <div class="output-box" id="outputBox">
+    <h2>✅ Prompt listo — copialo y pegalo en ChatGPT o Grok</h2>
+    <textarea id="promptOutput" readonly></textarea>
+    <div class="output-actions">
+      <button class="btn-copiar" id="btnCopiar" onclick="copiarPrompt()">📋 Copiar prompt</button>
+    </div>
+    <p class="tip-text">Pegá el texto en el chat de ChatGPT (usa DALL·E) o Grok y pedile que genere la imagen.</p>
+  </div>
+</div>
+
+<!-- ═══ MODAL ADVERTENCIA ═══ -->
+<div class="modal-overlay" id="warnModal">
+  <div class="modal">
+    <div class="modal-icon">⚠️</div>
+    <h3>Hay campos sin completar</h3>
+    <p>Los siguientes datos están vacíos o incompletos:</p>
+    <div class="modal-list" id="warnList"></div>
+    <p>Podés continuar igual — el prompt se generará con los espacios vacíos.</p>
+    <div class="modal-btns">
+      <button class="btn btn-ghost" onclick="closeModal('warnModal')">← Volver a corregir</button>
+      <button class="btn btn-danger" id="btnContinueAnyway">Generar igual →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL CONFIRMACIÓN ═══ -->
+<div class="modal-overlay" id="confirmModal">
+  <div class="modal">
+    <div class="modal-icon">🗑️</div>
+    <h3 id="confirmTitle">¿Confirmás?</h3>
+    <p id="confirmMsg">Esta acción no se puede deshacer.</p>
+    <div class="modal-btns">
+      <button class="btn btn-ghost" onclick="closeModal('confirmModal')">Cancelar</button>
+      <button class="btn btn-danger" id="btnConfirmOk">Sí, limpiar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ══════════════════════════════════════════
+   DATOS INICIALES
+══════════════════════════════════════════ */
+const PROVINCIAS = ["JUJUY","SALTA","CORDOBA","PROVINCIA","CIUDAD"];
+const MESES = ["ENERO","FEBRERO","MARZO","ABRIL","MAYO","JUNIO","JULIO","AGOSTO","SEPTIEMBRE","OCTUBRE","NOVIEMBRE","DICIEMBRE"];
+
+const DEFAULT_CARDS = [
+  {titulo:"DÍA DEL ESCRITOR",          ilus:"pluma antigua y libros apilados",                   num1:"17", num2:""},
+  {titulo:"DÍA DE LOS MEDIOS",          ilus:"micrófono de radio, televisor y cámara de noticias",num1:"52", num2:""},
+  {titulo:"DÍA DEL NIETO",              ilus:"abuela con gafas abrazando a su nieto",              num1:"03", num2:""},
+  {titulo:"DÍA DEL RECUPERADOR URBANO", ilus:"cartonero con carrito y contenedor de reciclaje",   num1:"07", num2:""},
+  {titulo:"PLATITA",   ilus:"monedas doradas apiladas y billetes de dólares",        num1:"32", num2:""},
+  {titulo:"ACCIDENTE", ilus:"auto rojo chocado con señal de advertencia triangular", num1:"24", num2:""},
+  {titulo:"EL LOCO",   ilus:"personaje caricaturesco desquiciado con pelo revuelto", num1:"22", num2:""},
+  {titulo:"LADRÓN",    ilus:"ladrón con antifaz negro y bolsa con símbolo de dinero",num1:"79", num2:""},
+];
+
+const DEFAULT_AT = [
+  ["72","62","02","32","59"],
+  ["62","13","29","46","45"],
+  ["","","","",""],
+  ["","","","",""],
+  ["","","","",""],
+];
+
+const DEFAULT_VISUAL = {
+  fondo: "crema/beige caricaturesco, ornamentado. Evitar estilo vintage.",
+  estilo: "caricaturesco y colorido tipo boletín de agencia de quiniela",
+  notas: ""
+};
+
+/* ══════════════════════════════════════════
+   STORAGE
+══════════════════════════════════════════ */
+function saveAll() {
+  const d = {};
+  // fecha
+  d.fecha = g("fechaInput");
+  // cards
+  d.cards = [];
+  for (let i = 1; i <= 8; i++) {
+    d.cards.push({
+      titulo: g(`titulo_${i}`),
+      ilus:   g(`ilus_${i}`),
+      num1:   g(`num1_${i}`),
+      num2:   g(`num2_${i}`) || "",
+    });
+  }
+  // atrasados
+  d.at = PROVINCIAS.map((_, gi) =>
+    [0,1,2,3,4].map(ni => g(`at_${gi}_${ni}`))
+  );
+  // visual
+  d.vis = {
+    fondo:  g("vis_fondo"),
+    estilo: g("vis_estilo"),
+    notas:  g("vis_notas"),
+  };
+  localStorage.setItem("ag217", JSON.stringify(d));
+}
+
+function loadAll() {
+  const raw = localStorage.getItem("ag217");
+  if (!raw) return null;
+  try { return JSON.parse(raw); } catch(e) { return null; }
+}
+
+/* ══════════════════════════════════════════
+   HELPERS
+══════════════════════════════════════════ */
+function g(id) { return (document.getElementById(id)?.value || "").trim(); }
+
+function onlyNums(e) {
+  e.target.value = e.target.value.replace(/[^0-9]/g,"").slice(0,2);
+}
+
+function formatFecha(val) {
+  if (!val) return "— — —";
+  const [y,m,d] = val.split("-");
+  return `${parseInt(d)} DE ${MESES[parseInt(m)-1]}`;
+}
+
+function todayISO() {
+  return new Date().toISOString().slice(0,10);
+}
+
+/* ══════════════════════════════════════════
+   FECHA
+══════════════════════════════════════════ */
+const fechaInput = document.getElementById("fechaInput");
+const fechaPreview = document.getElementById("fechaPreview");
+
+fechaInput.value = todayISO();
+fechaPreview.textContent = formatFecha(fechaInput.value);
+fechaInput.addEventListener("change", () => {
+  fechaPreview.textContent = formatFecha(fechaInput.value);
+  saveAll();
+});
+
+/* ══════════════════════════════════════════
+   TARJETAS
+══════════════════════════════════════════ */
+function buildCards(data) {
+  const grid = document.getElementById("cardsGrid");
+  grid.innerHTML = "";
+  (data || DEFAULT_CARDS).forEach((card, i) => {
+    const n = i + 1;
+    const hasNum2 = card.num2 && card.num2 !== "";
+    const div = document.createElement("div");
+    div.className = "card-item";
+    div.id = `card_${n}`;
+    div.innerHTML = `
+      <div class="card-hdr">
+        <span class="card-badge">${n}</span>
+        <span class="card-name">Tarjeta ${n}</span>
+      </div>
+      <label>Título</label>
+      <input type="text" id="titulo_${n}" value="${esc(card.titulo)}" placeholder="Ej: DÍA DEL ESCRITOR">
+      <label>Ilustración <span style="font-weight:400;color:#ccc">(opcional)</span></label>
+      <textarea id="ilus_${n}" placeholder="Describí la imagen (puede quedar vacío)">${esc(card.ilus)}</textarea>
+      <label>Número(s)</label>
+      <div class="num-row" id="numrow_${n}">
+        <input class="num-input" type="text" id="num1_${n}" maxlength="2" value="${esc(card.num1)}" placeholder="00">
+        <div id="num2wrap_${n}" style="display:${hasNum2?'flex':'none'};align-items:center;gap:5px">
+          <input class="num-input" type="text" id="num2_${n}" maxlength="2" value="${esc(card.num2||'')}" placeholder="00">
+          <button class="btn-rmnum" onclick="removeNum(${n})" title="Quitar 2° número">✕</button>
+        </div>
+        <button class="btn-addnum" id="addnum_${n}" onclick="addNum(${n})" title="Agregar 2° número" ${hasNum2?'disabled':''}>＋</button>
+      </div>
+    `;
+    grid.appendChild(div);
+
+    // live save
+    ["titulo","ilus"].forEach(f => {
+      document.getElementById(`${f}_${n}`).addEventListener("input", saveAll);
+    });
+    const n1 = document.getElementById(`num1_${n}`);
+    n1.addEventListener("input", e => { onlyNums(e); saveAll(); });
+  });
+}
+
+function addNum(n) {
+  document.getElementById(`num2wrap_${n}`).style.display = "flex";
+  document.getElementById(`addnum_${n}`).disabled = true;
+  const inp = document.getElementById(`num2_${n}`);
+  inp.addEventListener("input", e => { onlyNums(e); saveAll(); });
+  inp.focus();
+  saveAll();
+}
+
+function removeNum(n) {
+  document.getElementById(`num2_${n}`).value = "";
+  document.getElementById(`num2wrap_${n}`).style.display = "none";
+  document.getElementById(`addnum_${n}`).disabled = false;
+  saveAll();
+}
+
+function esc(s) { return (s||"").replace(/"/g,"&quot;").replace(/</g,"&lt;"); }
+
+/* ══════════════════════════════════════════
+   ATRASADOS
+══════════════════════════════════════════ */
+function buildAtrasados(data) {
+  const cont = document.getElementById("atrasadosContainer");
+  cont.innerHTML = "";
+  PROVINCIAS.forEach((prov, gi) => {
+    const nums = (data && data[gi]) ? data[gi] : DEFAULT_AT[gi];
+    const div = document.createElement("div");
+    div.className = "at-group";
+    const inputs = nums.map((n, ni) =>
+      `<input class="num-circle" type="text" id="at_${gi}_${ni}" maxlength="2" value="${esc(n)}" placeholder="00">`
+    ).join("");
+    div.innerHTML = `
+      <div class="at-hdr">
+        <h3>📍 ${prov}</h3>
+        <button class="btn btn-warning" onclick="confirmClearProvincia(${gi})">🗑 Limpiar</button>
+      </div>
+      <div class="nums-row">${inputs}</div>
+    `;
+    cont.appendChild(div);
+    for (let ni = 0; ni < 5; ni++) {
+      const inp = document.getElementById(`at_${gi}_${ni}`);
+      inp.addEventListener("input", e => { onlyNums(e); saveAll(); });
+    }
+  });
+}
+
+/* ══════════════════════════════════════════
+   VISUAL CONFIG
+══════════════════════════════════════════ */
+function loadVisual(vis) {
+  const v = vis || DEFAULT_VISUAL;
+  document.getElementById("vis_fondo").value  = v.fondo  || DEFAULT_VISUAL.fondo;
+  document.getElementById("vis_estilo").value = v.estilo || DEFAULT_VISUAL.estilo;
+  document.getElementById("vis_notas").value  = v.notas  || "";
+}
+
+function resetVisual() {
+  loadVisual(DEFAULT_VISUAL);
+  saveAll();
+}
+
+["vis_fondo","vis_estilo","vis_notas"].forEach(id => {
+  document.getElementById(id)?.addEventListener("input", saveAll);
+});
+
+/* ══════════════════════════════════════════
+   INIT — LOAD FROM STORAGE
+══════════════════════════════════════════ */
+(function init() {
+  const saved = loadAll();
+  if (saved) {
+    if (saved.fecha) {
+      fechaInput.value = saved.fecha;
+      fechaPreview.textContent = formatFecha(saved.fecha);
+    }
+    buildCards(saved.cards);
+    buildAtrasados(saved.at);
+    loadVisual(saved.vis);
+  } else {
+    buildCards(null);
+    buildAtrasados(null);
+    loadVisual(null);
+  }
+})();
+
+/* ══════════════════════════════════════════
+   CLEAR ACTIONS
+══════════════════════════════════════════ */
+function confirmClearCards() {
+  showConfirm(
+    "¿Limpiar todas las tarjetas?",
+    "Se borrarán los títulos, ilustraciones y números de las 8 tarjetas.",
+    () => {
+      buildCards(DEFAULT_CARDS.map(() => ({titulo:"", ilus:"", num1:"", num2:""})));
+      saveAll();
+    }
+  );
+}
+
+function confirmClearProvincia(gi) {
+  showConfirm(
+    `¿Limpiar atrasados de ${PROVINCIAS[gi]}?`,
+    "Se borrarán los 5 números de esta provincia.",
+    () => {
+      for (let ni = 0; ni < 5; ni++) {
+        const el = document.getElementById(`at_${gi}_${ni}`);
+        if (el) el.value = "";
+      }
+      saveAll();
+    }
+  );
+}
+
+/* ══════════════════════════════════════════
+   MODALS
+══════════════════════════════════════════ */
+function closeModal(id) {
+  document.getElementById(id).classList.remove("active");
+}
+
+let _confirmCallback = null;
+function showConfirm(title, msg, cb) {
+  document.getElementById("confirmTitle").textContent = title;
+  document.getElementById("confirmMsg").textContent = msg;
+  _confirmCallback = cb;
+  document.getElementById("confirmModal").classList.add("active");
+}
+document.getElementById("btnConfirmOk").addEventListener("click", () => {
+  closeModal("confirmModal");
+  if (_confirmCallback) _confirmCallback();
+});
+
+function showWarnModal(warnings, onContinue) {
+  document.getElementById("warnList").innerHTML = warnings.map(w => `• ${w}`).join("<br>");
+  document.getElementById("warnModal").classList.add("active");
+  const btn = document.getElementById("btnContinueAnyway");
+  btn.onclick = () => { closeModal("warnModal"); onContinue(); };
+}
+
+// close modals on overlay click
+document.querySelectorAll(".modal-overlay").forEach(el => {
+  el.addEventListener("click", e => { if (e.target === el) el.classList.remove("active"); });
+});
+
+/* ══════════════════════════════════════════
+   VALIDACIÓN
+══════════════════════════════════════════ */
+function validateAndGenerate() {
+  const warnings = [];
+
+  for (let i = 1; i <= 8; i++) {
+    const titulo = g(`titulo_${i}`);
+    const num1   = g(`num1_${i}`);
+    if (!titulo) warnings.push(`Tarjeta ${i}: falta el título`);
+    if (!num1)   warnings.push(`Tarjeta ${i}: falta el número`);
+  }
+
+  PROVINCIAS.forEach((prov, gi) => {
+    for (let ni = 0; ni < 5; ni++) {
+      if (!g(`at_${gi}_${ni}`)) {
+        warnings.push(`Atrasados ${prov}: hay números vacíos`);
+        break;
+      }
+    }
+  });
+
+  if (warnings.length > 0) {
+    showWarnModal(warnings, generarPrompt);
+  } else {
+    generarPrompt();
+  }
+}
+
+/* ══════════════════════════════════════════
+   GENERAR PROMPT
+══════════════════════════════════════════ */
+function generarPrompt() {
+  const fecha  = formatFecha(g("fechaInput")) || "[FECHA]";
+  const fondo  = g("vis_fondo")  || DEFAULT_VISUAL.fondo;
+  const estilo = g("vis_estilo") || DEFAULT_VISUAL.estilo;
+  const notas  = g("vis_notas");
+
+  // tarjetas
+  let fila1 = "", fila2 = "";
+  for (let i = 1; i <= 8; i++) {
+    const titulo = g(`titulo_${i}`) || `[TÍTULO_${i}]`;
+    const ilus   = g(`ilus_${i}`)   || `[ILUSTRACIÓN_${i}]`;
+    const num1   = g(`num1_${i}`)   || "??";
+    const num2   = g(`num2_${i}`);
+    const numStr = num2 ? `Números: ${num1} / ${num2}` : `Número: ${num1}`;
+    const line   = `${i}. ${titulo} - ${ilus} - ${numStr}\n`;
+    if (i <= 4) fila1 += line; else fila2 += line;
+  }
+
+  // atrasados
+  const atLines = PROVINCIAS.map((prov, gi) => {
+    const nums = [0,1,2,3,4].map(ni => g(`at_${gi}_${ni}`) || "??").join(" ");
+    return `- "ATRASADOS ${prov}" con 5 números en círculos azules: ${nums}`;
+  }).join("\n");
+
+  const estiloExtra = notas ? `\n- ${notas}` : "";
+
+  const prompt =
+`Generá una imagen estilo boletín de quiniela argentino con el siguiente diseño exacto:
+
+ESTRUCTURA GENERAL:
+- Formato vertical (proporción aprox 2:3)
+- Fondo color ${fondo}
+- Estética ${estilo}
+
+ENCABEZADO (parte superior):
+- Banner rojo angosto arriba con texto blanco que diga: "BOLETÍN DEL DÍA"
+- A la derecha del banner, ilustración caricaturesca de un diariero (canillita) con gorra roja sosteniendo un papel/diario que dice "AGENCIA 217"
+- NO incluir título gigante en el medio
+- Banner verde con forma de cinta/listón que diga: "HOY ${fecha}"
+
+CUERPO PRINCIPAL - 8 TARJETAS (2 filas de 4):
+Cada tarjeta tiene:
+- Marco rectangular con fondo crema y borde marrón ornamentado
+- Título arriba en color (verde, rojo o negro según corresponda)
+- Ilustración caricaturesca central
+- Número de 2 dígitos abajo en círculo azul con borde dorado
+
+FILA 1:
+${fila1.trimEnd()}
+MARCA DE AGUA:- En el centro de las tarjetas, sutil y semitransparente, texto que diga "DATOS DE LA AGENCIA 217" como marca de agua (no como título prominente)
+FILA 2:
+${fila2.trimEnd()}
+SECCIÓN ATRASADOS (parte inferior):
+${atLines}
+
+
+
+DECORACIÓN ESQUINA INFERIOR DERECHA:
+- Ilustración de bolillero/tómbola de lotería con bolillas numeradas saliendo
+- Cartel que diga "SUERTE" debajo del bolillero
+
+ESTILO VISUAL:
+- Caricaturas vibrantes y alegres
+- Colores saturados
+- Tipografía bold y llamativa
+- Aspecto de boletín impreso tradicional argentino
+- Texto en español${estiloExtra}
+- En la parte inferior al final que diga "JUGAR COMPULSIVAMENTE ES PERJUDICIAL PARA LA SALUD" en el margen de abajo.`;
+
+  document.getElementById("promptOutput").value = prompt;
+  const box = document.getElementById("outputBox");
+  box.style.display = "block";
+  box.scrollIntoView({ behavior: "smooth" });
+}
+
+/* ══════════════════════════════════════════
+   COPIAR
+══════════════════════════════════════════ */
+function copiarPrompt() {
+  const ta = document.getElementById("promptOutput");
+  ta.select();
+  document.execCommand("copy");
+  const btn = document.getElementById("btnCopiar");
+  btn.textContent = "✅ ¡Copiado!";
+  btn.classList.add("copiado");
+  setTimeout(() => {
+    btn.textContent = "📋 Copiar prompt";
+    btn.classList.remove("copiado");
+  }, 2500);
+}
+</script>
+</body>
+</html>
