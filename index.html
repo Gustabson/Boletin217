@@ -1,327 +1,492 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="light">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Generador — Agencia 217</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="Generador de prompt para el boletín diario de Agencia 217." />
+<title>Boletín 217 · Generador</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<script>
+  (function () {
+    try {
+      var t = localStorage.getItem('b217-theme');
+      if (t === 'dark' || t === 'light') {
+        document.documentElement.setAttribute('data-theme', t);
+      }
+    } catch (e) {}
+  })();
+</script>
 <style>
 :root {
-  --red: #c0392b; --red-dark: #922b21;
-  --gold: #f39c12; --gold-light: #fdeaa8;
-  --blue: #1a6eb5; --green: #27ae60;
-  --cream: #fffdf5; --dark: #2c3e50;
+  --bg: #f6f7fb;
+  --bg-elev: #ffffff;
+  --bg-soft: #eef0f7;
+  --text: #0f172a;
+  --text-soft: #475569;
+  --text-mute: #64748b;
+  --border: rgba(15, 23, 42, 0.08);
+  --border-strong: rgba(15, 23, 42, 0.14);
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05);
+  --shadow-md: 0 8px 24px -8px rgba(15, 23, 42, 0.12), 0 2px 6px rgba(15, 23, 42, 0.05);
+  --shadow-lg: 0 20px 48px -16px rgba(15, 23, 42, 0.18);
+  --accent: #6366f1;
+  --accent-2: #a855f7;
+  --accent-soft: rgba(99, 102, 241, 0.08);
+  --danger: #e11d48;
+  --danger-soft: rgba(225, 29, 72, 0.08);
+  --success: #10b981;
+  --warn: #f59e0b;
+  --radius: 16px;
+  --radius-sm: 10px;
+  --radius-lg: 22px;
+  --container: 1080px;
+  --font: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 }
-* { box-sizing: border-box; margin: 0; padding: 0; }
 
+[data-theme="dark"] {
+  --bg: #07070b;
+  --bg-elev: rgba(22, 22, 32, 0.7);
+  --bg-soft: rgba(255, 255, 255, 0.04);
+  --text: #f1f5f9;
+  --text-soft: #cbd5e1;
+  --text-mute: #94a3b8;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.16);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 12px 32px -10px rgba(0, 0, 0, 0.6), 0 2px 6px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 30px 60px -20px rgba(0, 0, 0, 0.7);
+  --accent: #818cf8;
+  --accent-2: #c084fc;
+  --accent-soft: rgba(129, 140, 248, 0.14);
+  --danger: #fb7185;
+  --danger-soft: rgba(251, 113, 133, 0.14);
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
 body {
-  font-family: 'Poppins', 'Segoe UI', sans-serif;
-  background: radial-gradient(ellipse at top, #3d0a00 0%, #1a0500 60%, #0d0200 100%);
-  min-height: 100vh;
-  color: var(--dark);
+  margin: 0;
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  line-height: 1.5;
+  transition: background 0.4s ease, color 0.4s ease;
+  overflow-x: hidden;
 }
+a { color: inherit; text-decoration: none; }
 
-/* ── HEADER ── */
-header {
-  background: linear-gradient(135deg, #8e1a0e 0%, #c0392b 40%, #e74c3c 60%, #c0392b 80%, #8e1a0e 100%);
-  background-size: 300% 300%;
-  animation: hdrShift 6s ease infinite;
-  color: white;
-  text-align: center;
-  padding: 28px 20px 22px;
-  position: relative;
-  overflow: hidden;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.5);
-}
-@keyframes hdrShift {
-  0%,100%{background-position:0% 50%} 50%{background-position:100% 50%}
-}
-header::before, header::after {
-  content: "🎰";
-  position: absolute;
-  font-size: 7rem;
-  opacity: 0.07;
-  animation: floatEmoji 7s ease-in-out infinite;
-}
-header::before { top:-15px; left:-10px; }
-header::after  { bottom:-15px; right:-10px; animation-direction:reverse; }
-@keyframes floatEmoji {
-  0%,100%{transform:translateY(0) rotate(-5deg)} 50%{transform:translateY(-12px) rotate(5deg)}
-}
-header h1 { font-size:2rem; font-weight:900; letter-spacing:2px; text-shadow:2px 2px 10px rgba(0,0,0,0.4); position:relative; }
-header p  { font-size:.88rem; opacity:.8; margin-top:5px; position:relative; }
+.container { max-width: var(--container); margin: 0 auto; padding: 0 24px; }
 
-.gold-stripe {
-  height: 6px;
-  background: linear-gradient(90deg, #8e6a00, #f39c12, #ffe066, #f39c12, #8e6a00);
-  background-size: 300%;
-  animation: goldShimmer 2.5s linear infinite;
+/* Background orbs */
+.bg-orbs { position: fixed; inset: 0; pointer-events: none; z-index: -1; overflow: hidden; }
+.orb { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.45; transition: opacity 0.6s ease; }
+.orb-1 { width: 480px; height: 480px; top: -120px; left: -120px; background: radial-gradient(circle, #818cf8 0%, transparent 70%); }
+.orb-2 { width: 540px; height: 540px; top: 30%; right: -180px; background: radial-gradient(circle, #c084fc 0%, transparent 70%); }
+.orb-3 { width: 400px; height: 400px; bottom: -160px; left: 30%; background: radial-gradient(circle, #38bdf8 0%, transparent 70%); }
+[data-theme="light"] .orb { opacity: 0.25; }
+[data-theme="dark"] .orb { opacity: 0.35; }
+
+/* Header */
+.site-header {
+  position: sticky; top: 0; z-index: 50;
+  backdrop-filter: blur(18px) saturate(180%);
+  -webkit-backdrop-filter: blur(18px) saturate(180%);
+  background: color-mix(in srgb, var(--bg) 75%, transparent);
+  border-bottom: 1px solid var(--border);
 }
-@keyframes goldShimmer { 0%{background-position:0%} 100%{background-position:300%} }
+.header-inner { display: flex; align-items: center; gap: 16px; padding: 14px 24px; max-width: var(--container); margin: 0 auto; }
+.brand { display: flex; align-items: center; gap: 12px; }
+.brand-mark {
+  width: 40px; height: 40px; border-radius: 12px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: #fff; display: inline-flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 0.95rem; letter-spacing: -0.02em;
+  box-shadow: var(--shadow-md);
+}
+.brand-text { display: flex; flex-direction: column; line-height: 1.1; }
+.brand-name { font-weight: 700; font-size: 1.05rem; letter-spacing: -0.01em; }
+.brand-sub { font-size: 0.78rem; color: var(--text-mute); }
+.header-actions { margin-left: auto; display: flex; align-items: center; gap: 10px; }
 
-/* ── CONTAINER ── */
-.container { max-width:960px; margin:0 auto; padding:28px 16px 80px; }
+.theme-toggle {
+  width: 40px; height: 40px; border-radius: 999px;
+  border: 1px solid var(--border); background: var(--bg-soft); color: var(--text);
+  display: inline-flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: background 0.2s, transform 0.2s, border-color 0.2s;
+}
+.theme-toggle:hover { background: var(--bg-elev); border-color: var(--border-strong); transform: translateY(-1px); }
+[data-theme="light"] .theme-toggle .icon-moon { display: none; }
+[data-theme="dark"] .theme-toggle .icon-sun { display: none; }
 
-/* ── SECTION CARD ── */
+/* Hero */
+.hero { padding: 28px 0 8px; }
+.hero h1 {
+  font-size: clamp(1.4rem, 2.8vw, 1.9rem);
+  line-height: 1.2; letter-spacing: -0.01em; margin: 0; font-weight: 700;
+}
+.grad {
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.hero p { color: var(--text-mute); margin: 6px 0 0; font-size: 0.95rem; }
+
+main { padding-bottom: 60px; }
+
+/* Section card */
 .section {
-  background: white;
-  border-radius: 18px;
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
   padding: 22px 24px;
-  margin-bottom: 22px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.13);
-  border-top: 5px solid var(--red);
-  animation: slideUp .4s ease both;
-  transition: transform .2s, box-shadow .2s;
+  margin-top: 18px;
+  box-shadow: var(--shadow-sm);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
 }
-.section:hover { transform:translateY(-2px); box-shadow:0 12px 36px rgba(0,0,0,0.16); }
-@keyframes slideUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
-.section:nth-child(2){animation-delay:.05s}
-.section:nth-child(3){animation-delay:.1s}
-.section:nth-child(4){animation-delay:.15s}
-.section:nth-child(5){animation-delay:.2s}
+[data-theme="dark"] .section { backdrop-filter: blur(20px) saturate(140%); -webkit-backdrop-filter: blur(20px) saturate(140%); }
+.section:hover { border-color: var(--border-strong); box-shadow: var(--shadow-md); }
 
-.sec-hdr {
-  display:flex; justify-content:space-between; align-items:center;
-  flex-wrap:wrap; gap:10px; margin-bottom:18px;
-  padding-bottom:12px; border-bottom:2px dashed #f0e0c0;
-}
+.sec-hdr { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; }
 .sec-hdr h2 {
-  font-size:.95rem; font-weight:700; text-transform:uppercase;
-  letter-spacing:1.5px; color:var(--red);
-  display:flex; align-items:center; gap:8px;
+  font-size: 0.78rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.1em; color: var(--text-mute); margin: 0;
+  display: flex; align-items: center; gap: 8px;
 }
-.sec-hdr-btns { display:flex; gap:8px; flex-wrap:wrap; }
+.sec-hdr-btns { display: flex; gap: 8px; flex-wrap: wrap; }
 
-/* ── BUTTONS ── */
+/* Buttons */
 .btn {
-  padding:7px 14px; border:none; border-radius:8px;
-  font-family:inherit; font-size:.78rem; font-weight:600;
-  cursor:pointer; transition:all .2s;
-  display:inline-flex; align-items:center; gap:5px;
+  padding: 8px 14px; border: 1px solid var(--border); border-radius: 999px;
+  font-family: inherit; font-size: 0.82rem; font-weight: 600;
+  background: var(--bg-soft); color: var(--text);
+  cursor: pointer; transition: all 0.2s;
+  display: inline-flex; align-items: center; gap: 6px;
 }
-.btn:active { transform:scale(.95); }
-.btn-danger  { background:#fff0ee; color:var(--red); border:1.5px solid #f5c6c2; }
-.btn-danger:hover  { background:var(--red); color:white; }
-.btn-warning { background:#fff8e1; color:#b7770d; border:1.5px solid #fde68a; }
-.btn-warning:hover { background:var(--gold); color:white; }
-.btn-ghost   { background:#f5f5f5; color:#555; border:1.5px solid #e0e0e0; }
-.btn-ghost:hover { background:#e0e0e0; }
+.btn:hover { background: var(--bg-elev); border-color: var(--border-strong); transform: translateY(-1px); }
+.btn:active { transform: scale(0.97); }
+.btn-ghost { background: transparent; }
+.btn-danger { background: var(--danger-soft); color: var(--danger); border-color: transparent; }
+.btn-danger:hover { background: var(--danger); color: #fff; }
+.btn-warn { background: rgba(245, 158, 11, 0.1); color: #b45309; border-color: transparent; }
+[data-theme="dark"] .btn-warn { color: #fbbf24; }
+.btn-warn:hover { background: var(--warn); color: #fff; }
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: #fff; border: 0;
+}
+.btn-primary:hover { filter: brightness(1.05); box-shadow: 0 8px 20px -6px var(--accent); }
 
 .btn-generar {
-  display:block; width:100%;
-  padding:18px; margin-bottom:24px;
-  background:linear-gradient(135deg, var(--red), #8e1a0e, var(--red));
-  background-size:250%; color:white; border:none;
-  border-radius:14px; font-family:inherit; font-size:1.15rem;
-  font-weight:900; cursor:pointer; letter-spacing:2px;
-  text-transform:uppercase; transition:all .3s;
-  box-shadow:0 6px 22px rgba(192,57,43,.45);
-  animation:btnPulse 3s ease-in-out infinite;
+  display: block; width: 100%; margin-top: 28px;
+  padding: 16px 18px; border: 0; border-radius: var(--radius);
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: #fff; font-family: inherit; font-size: 1rem; font-weight: 700;
+  letter-spacing: 0.02em; cursor: pointer;
+  box-shadow: 0 12px 32px -10px var(--accent);
+  transition: transform 0.2s, box-shadow 0.2s, filter 0.2s;
 }
-.btn-generar:hover { background-position:right; transform:translateY(-2px); animation:none; box-shadow:0 10px 30px rgba(192,57,43,.55); }
-@keyframes btnPulse { 0%,100%{box-shadow:0 6px 22px rgba(192,57,43,.4)} 50%{box-shadow:0 6px 32px rgba(192,57,43,.7)} }
+.btn-generar:hover { transform: translateY(-2px); filter: brightness(1.05); box-shadow: 0 18px 36px -10px var(--accent); }
 
-/* ── FECHA ── */
-.fecha-row { display:flex; gap:14px; align-items:center; flex-wrap:wrap; }
-.fecha-row label { font-weight:600; color:#666; font-size:.9rem; }
-.fecha-row input[type="date"] {
-  padding:9px 14px; border:2px solid #e0e0e0; border-radius:10px;
-  font-size:.95rem; font-family:inherit; background:#fafafa; transition:border-color .2s;
+/* Forms */
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-group label {
+  font-size: 0.72rem; font-weight: 700; color: var(--text-mute);
+  text-transform: uppercase; letter-spacing: 0.06em;
 }
-.fecha-row input[type="date"]:focus { outline:none; border-color:var(--red); }
+.input, .form-group input, .form-group select, .form-group textarea {
+  padding: 10px 14px; border: 1px solid var(--border); border-radius: var(--radius-sm);
+  font-family: inherit; font-size: 0.92rem; background: var(--bg-soft); color: var(--text);
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+}
+.input:focus, .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+  outline: none; border-color: var(--accent);
+  background: var(--bg-elev);
+  box-shadow: 0 0 0 4px var(--accent-soft);
+}
+.form-group textarea { resize: vertical; min-height: 70px; }
+
+/* Fecha */
+.fecha-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.fecha-row label { font-size: 0.85rem; color: var(--text-soft); font-weight: 600; }
 .fecha-badge {
-  background:linear-gradient(135deg,var(--green),#1e8449); color:white;
-  padding:8px 20px; border-radius:25px; font-weight:700; font-size:.88rem;
-  letter-spacing:1px; box-shadow:0 3px 10px rgba(39,174,96,.3);
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: #fff; padding: 6px 16px; border-radius: 999px;
+  font-weight: 700; font-size: 0.82rem; letter-spacing: 0.04em;
 }
 
-/* ── VISUAL CONFIG ── */
-.visual-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
-@media(max-width:600px){ .visual-grid{grid-template-columns:1fr} }
-.form-group { display:flex; flex-direction:column; gap:5px; }
-.form-group label { font-size:.72rem; font-weight:700; color:#888; text-transform:uppercase; letter-spacing:.5px; }
-.form-group input, .form-group select, .form-group textarea {
-  padding:9px 12px; border:2px solid #e8e8e8; border-radius:9px;
-  font-family:inherit; font-size:.88rem; background:#fafafa; transition:border-color .2s, box-shadow .2s;
+/* Formato (segmented) */
+.segmented {
+  display: inline-flex; gap: 4px; padding: 4px;
+  background: var(--bg-soft); border: 1px solid var(--border);
+  border-radius: 999px;
 }
-.form-group input:focus, .form-group select:focus, .form-group textarea:focus {
-  outline:none; border-color:var(--red); box-shadow:0 0 0 3px rgba(192,57,43,.1);
+.seg-opt { position: relative; }
+.seg-opt input { position: absolute; opacity: 0; pointer-events: none; }
+.seg-opt label {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 8px 18px; border-radius: 999px; cursor: pointer;
+  font-size: 0.88rem; font-weight: 600; color: var(--text-soft);
+  transition: color 0.2s, background 0.2s, box-shadow 0.2s;
+  user-select: none;
 }
-.form-group textarea { resize:vertical; min-height:64px; }
+.seg-opt label:hover { color: var(--text); }
+.seg-opt input:checked + label {
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: #fff; box-shadow: 0 6px 16px -6px var(--accent);
+}
+.seg-hint { font-size: 0.78rem; color: var(--text-mute); margin-top: 8px; }
 
-/* ── CARDS GRID ── */
-.cards-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(198px,1fr)); gap:14px; }
+/* Visual grid */
+.visual-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media (max-width: 640px) { .visual-grid { grid-template-columns: 1fr; } }
+.full { grid-column: 1 / -1; }
 
+/* Cards (tarjetas) */
+.cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
 .card-item {
-  background:linear-gradient(160deg,#fffdf8,#fff7e6);
-  border:2px solid #e8d5a3; border-radius:14px; padding:14px;
-  transition:box-shadow .2s, transform .2s; position:relative;
+  background: var(--bg-soft);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s, background 0.2s;
 }
-.card-item:hover { box-shadow:0 6px 22px rgba(243,156,18,.2); transform:translateY(-3px); }
-
-.card-hdr { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+.card-item:hover { border-color: var(--border-strong); background: var(--bg-elev); transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.card-hdr { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
 .card-badge {
-  background:linear-gradient(135deg,var(--blue),#1558a0); color:white;
-  border:2px solid var(--gold); border-radius:50%;
-  width:30px; height:30px; display:flex; align-items:center; justify-content:center;
-  font-weight:700; font-size:.82rem; box-shadow:0 2px 6px rgba(26,110,181,.3); flex-shrink:0;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: #fff; border-radius: 50%;
+  width: 30px; height: 30px;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 0.85rem;
+  box-shadow: 0 4px 10px -3px var(--accent);
 }
-.card-name { font-size:.68rem; font-weight:700; color:var(--red); text-transform:uppercase; letter-spacing:.4px; }
-
-.card-item label { display:block; font-size:.67rem; color:#999; margin:7px 0 3px; font-weight:700; text-transform:uppercase; letter-spacing:.3px; }
+.card-name {
+  font-size: 0.68rem; font-weight: 700; color: var(--text-mute);
+  text-transform: uppercase; letter-spacing: 0.06em;
+}
+.card-item label {
+  display: block; font-size: 0.65rem; color: var(--text-mute);
+  margin: 8px 0 4px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+}
 .card-item input[type="text"], .card-item textarea {
-  width:100%; padding:6px 9px; border:1.5px solid #e0d5b0; border-radius:7px;
-  font-family:inherit; font-size:.83rem; background:white; transition:border-color .2s;
+  width: 100%; padding: 7px 10px; border: 1px solid var(--border); border-radius: 8px;
+  font-family: inherit; font-size: 0.85rem;
+  background: var(--bg-elev); color: var(--text);
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
-.card-item input[type="text"]:focus, .card-item textarea:focus { outline:none; border-color:var(--blue); }
-.card-item textarea { resize:vertical; min-height:44px; font-size:.76rem; }
+.card-item input[type="text"]:focus, .card-item textarea:focus {
+  outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft);
+}
+.card-item textarea { resize: vertical; min-height: 44px; font-size: 0.78rem; }
 
-.num-row { display:flex; align-items:center; gap:7px; margin-top:4px; flex-wrap:wrap; }
+.num-row { display: flex; align-items: center; gap: 8px; margin-top: 4px; flex-wrap: wrap; }
 .num-input {
-  width:58px; text-align:center; font-size:1.05rem; font-weight:700;
-  color:var(--blue); border:2px solid var(--blue) !important;
-  border-radius:50px !important; padding:5px 4px !important; background:white;
-  font-family:inherit;
+  width: 58px; text-align: center; font-size: 1rem; font-weight: 700;
+  color: var(--accent); border: 2px solid var(--accent) !important;
+  border-radius: 999px !important; padding: 6px 4px !important;
+  background: var(--bg-elev); font-family: inherit;
 }
-.num-input:focus { outline:none; border-color:var(--gold) !important; box-shadow:0 0 0 3px rgba(243,156,18,.2); }
+.num-input:focus { outline: none; box-shadow: 0 0 0 3px var(--accent-soft); }
 
 .btn-addnum {
-  width:26px; height:26px; border-radius:50%;
-  background:linear-gradient(135deg,var(--gold),#e67e22); color:white;
-  border:none; font-size:1rem; cursor:pointer; flex-shrink:0;
-  display:flex; align-items:center; justify-content:center;
-  transition:all .2s; box-shadow:0 2px 6px rgba(243,156,18,.35);
+  width: 26px; height: 26px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: #fff; border: none; font-size: 1rem; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: transform 0.15s, box-shadow 0.15s;
+  box-shadow: 0 4px 10px -3px var(--accent);
 }
-.btn-addnum:hover { transform:scale(1.15); }
-.btn-addnum:disabled { opacity:.35; cursor:not-allowed; transform:none; }
+.btn-addnum:hover { transform: scale(1.12); }
+.btn-addnum:disabled { opacity: 0.35; cursor: not-allowed; transform: none; box-shadow: none; }
 
 .btn-rmnum {
-  width:20px; height:20px; border-radius:50%;
-  background:#fff0ee; color:var(--red); border:1.5px solid #f5c6c2;
-  font-size:.8rem; cursor:pointer; flex-shrink:0;
-  display:flex; align-items:center; justify-content:center; transition:all .2s;
+  width: 22px; height: 22px; border-radius: 50%;
+  background: var(--danger-soft); color: var(--danger);
+  border: 1px solid transparent; font-size: 0.78rem; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
 }
-.btn-rmnum:hover { background:var(--red); color:white; }
+.btn-rmnum:hover { background: var(--danger); color: #fff; }
 
-/* ── ATRASADOS ── */
+/* Atrasados */
 .at-group {
-  background:linear-gradient(135deg,#f0f7ff,#e8f4ff);
-  border:2px solid #bee3f8; border-radius:12px; padding:13px 15px; margin-bottom:11px;
-  transition:box-shadow .2s;
+  background: var(--bg-soft);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px; margin-bottom: 10px;
+  transition: border-color 0.2s, background 0.2s;
 }
-.at-group:hover { box-shadow:0 4px 14px rgba(26,110,181,.12); }
-.at-hdr { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
-.at-hdr h3 { font-size:.82rem; font-weight:700; color:var(--blue); text-transform:uppercase; letter-spacing:1px; }
-.nums-row { display:flex; gap:9px; flex-wrap:wrap; }
+.at-group:hover { border-color: var(--border-strong); background: var(--bg-elev); }
+.at-hdr { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.at-hdr h3 {
+  font-size: 0.78rem; font-weight: 700; color: var(--text-soft);
+  text-transform: uppercase; letter-spacing: 0.08em; margin: 0;
+}
+.nums-row { display: flex; gap: 8px; flex-wrap: wrap; }
 .num-circle {
-  width:54px; padding:7px 4px; border:2px solid var(--blue); border-radius:50px;
-  text-align:center; font-size:.95rem; font-weight:700; color:var(--blue);
-  background:white; font-family:inherit; transition:border-color .2s, box-shadow .2s;
+  width: 54px; padding: 7px 4px;
+  border: 2px solid var(--accent); border-radius: 999px;
+  text-align: center; font-size: 0.92rem; font-weight: 700;
+  color: var(--accent); background: var(--bg-elev);
+  font-family: inherit; transition: box-shadow 0.2s;
 }
-.num-circle:focus { outline:none; border-color:var(--gold); box-shadow:0 0 0 3px rgba(243,156,18,.2); }
+.num-circle:focus { outline: none; box-shadow: 0 0 0 3px var(--accent-soft); }
 
-/* ── OUTPUT ── */
+/* Output */
 .output-box {
-  display:none; background:white; border-radius:18px; padding:24px;
-  box-shadow:0 8px 32px rgba(0,0,0,.13); border-top:5px solid var(--green);
-  animation:slideUp .4s ease;
+  display: none;
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px 24px; margin-top: 18px;
+  box-shadow: var(--shadow-md);
+  border-top: 3px solid var(--success);
 }
-.output-box h2 { color:var(--green); margin-bottom:14px; font-size:.95rem; text-transform:uppercase; letter-spacing:1px; }
+.output-box h2 {
+  color: var(--success); margin: 0 0 14px;
+  font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.1em;
+}
 .output-box textarea {
-  width:100%; min-height:400px; padding:14px; border:2px solid #e8e8e8;
-  border-radius:10px; font-size:.8rem; font-family:'Courier New',monospace;
-  background:#fafafa; resize:vertical; line-height:1.6;
+  width: 100%; min-height: 380px; padding: 14px;
+  border: 1px solid var(--border); border-radius: var(--radius-sm);
+  font-size: 0.82rem; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  background: var(--bg-soft); color: var(--text);
+  resize: vertical; line-height: 1.55;
 }
-.output-actions { display:flex; gap:12px; margin-top:14px; flex-wrap:wrap; }
+.output-actions { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
 .btn-copiar {
-  padding:12px 28px; background:linear-gradient(135deg,var(--green),#1e8449);
-  color:white; border:none; border-radius:10px; font-family:inherit;
-  font-size:.95rem; font-weight:700; cursor:pointer; transition:all .2s;
-  box-shadow:0 4px 12px rgba(39,174,96,.3);
+  padding: 10px 22px;
+  background: linear-gradient(135deg, var(--success), #059669);
+  color: #fff; border: none; border-radius: 999px;
+  font-family: inherit; font-size: 0.9rem; font-weight: 700; cursor: pointer;
+  transition: filter 0.2s, transform 0.2s;
+  box-shadow: 0 6px 14px -4px rgba(16, 185, 129, 0.4);
 }
-.btn-copiar:hover { filter:brightness(1.1); transform:translateY(-1px); }
-.btn-copiar.copiado { background:linear-gradient(135deg,#1a5276,#154360); }
-.tip-text { font-size:.73rem; color:#bbb; font-style:italic; margin-top:8px; }
+.btn-copiar:hover { filter: brightness(1.08); transform: translateY(-1px); }
+.btn-copiar.copiado { background: linear-gradient(135deg, var(--accent), var(--accent-2)); box-shadow: 0 6px 14px -4px var(--accent); }
+.tip-text { font-size: 0.78rem; color: var(--text-mute); margin: 10px 0 0; font-style: italic; }
 
-/* ── MODAL ── */
+/* Modal */
 .modal-overlay {
-  display:none; position:fixed; inset:0;
-  background:rgba(0,0,0,.6); backdrop-filter:blur(5px);
-  z-index:1000; align-items:center; justify-content:center;
+  display: none; position: fixed; inset: 0;
+  background: rgba(0, 0, 0, 0.55); backdrop-filter: blur(6px);
+  z-index: 1000; align-items: center; justify-content: center;
+  padding: 20px;
 }
-.modal-overlay.active { display:flex; }
+.modal-overlay.active { display: flex; }
 .modal {
-  background:white; border-radius:20px; padding:32px 28px;
-  max-width:440px; width:90%; animation:modalIn .3s ease;
-  box-shadow:0 20px 60px rgba(0,0,0,.35); border-top:5px solid var(--gold);
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 28px 26px;
+  max-width: 460px; width: 100%;
+  animation: modalIn 0.25s ease;
+  box-shadow: var(--shadow-lg);
 }
-@keyframes modalIn { from{opacity:0;transform:scale(.8) translateY(-20px)} to{opacity:1;transform:scale(1) translateY(0)} }
-.modal-icon { font-size:3rem; text-align:center; margin-bottom:10px; }
-.modal h3 { font-size:1.05rem; font-weight:700; text-align:center; color:var(--dark); margin-bottom:6px; }
-.modal p  { font-size:.85rem; color:#666; text-align:center; line-height:1.5; }
+@keyframes modalIn { from { opacity: 0; transform: scale(0.94) translateY(-8px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+.modal-icon { font-size: 2.4rem; text-align: center; margin-bottom: 8px; }
+.modal h3 { font-size: 1.05rem; font-weight: 700; text-align: center; color: var(--text); margin: 0 0 6px; }
+.modal p { font-size: 0.88rem; color: var(--text-soft); text-align: center; line-height: 1.55; margin: 0; }
 .modal-list {
-  background:#fff8ee; border:1.5px solid #fde68a; border-radius:10px;
-  padding:11px 15px; margin:12px 0; font-size:.82rem; color:#666; line-height:1.9;
-  max-height:160px; overflow-y:auto;
+  background: var(--bg-soft); border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px 16px; margin: 14px 0;
+  font-size: 0.84rem; color: var(--text-soft); line-height: 1.8;
+  max-height: 180px; overflow-y: auto;
 }
-.modal-btns { display:flex; gap:10px; margin-top:18px; justify-content:center; flex-wrap:wrap; }
-.modal-btns .btn { padding:10px 20px; font-size:.88rem; border-radius:10px; }
+.modal-btns { display: flex; gap: 10px; margin-top: 16px; justify-content: center; flex-wrap: wrap; }
+.card-style-grid { display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 14px; }
 
-/* ── CONFIRM MODAL ── */
-#confirmModal .modal { border-top-color:var(--red); }
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent); }
 
-/* ── CARD STYLE MODAL ── */
-#cardStyleModal .modal { max-width:520px; border-top-color:#8e44ad; }
-#cardStyleModal h3 { color:#8e44ad; }
-.card-style-grid { display:grid; grid-template-columns:1fr; gap:14px; margin-top:14px; }
-.card-style-grid .form-group label { color:#8e44ad; }
-.card-style-grid input, .card-style-grid textarea {
-  padding:9px 12px; border:2px solid #e8d5f5; border-radius:9px;
-  font-family:inherit; font-size:.88rem; background:#fafafa; transition:border-color .2s;
-  width:100%;
+@media (max-width: 720px) {
+  .header-inner { padding: 12px 16px; }
+  .container { padding: 0 16px; }
+  .section { padding: 18px; }
+  .brand-sub { display: none; }
 }
-.card-style-grid input:focus, .card-style-grid textarea:focus {
-  outline:none; border-color:#8e44ad; box-shadow:0 0 0 3px rgba(142,68,173,.1);
-}
-.btn-purple { background:#f5eeff; color:#8e44ad; border:1.5px solid #d7aefb; }
-.btn-purple:hover { background:#8e44ad; color:white; }
 
-::-webkit-scrollbar { width:5px; }
-::-webkit-scrollbar-thumb { background:var(--red); border-radius:3px; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}
 </style>
 </head>
 <body>
 
-<header>
-  <h1>🎰 AGENCIA 217</h1>
-  <p>Generador de Prompt para Boletín Diario</p>
-</header>
-<div class="gold-stripe"></div>
+<div class="bg-orbs" aria-hidden="true">
+  <span class="orb orb-1"></span>
+  <span class="orb orb-2"></span>
+  <span class="orb orb-3"></span>
+</div>
 
-<div class="container">
-
-  <!-- ═══ FECHA ═══ -->
-  <div class="section">
-    <div class="sec-hdr">
-      <h2>📅 Fecha del Boletín</h2>
+<header class="site-header">
+  <div class="header-inner">
+    <a class="brand" href="#top" aria-label="Inicio">
+      <span class="brand-mark">217</span>
+      <span class="brand-text">
+        <span class="brand-name">Boletín 217</span>
+        <span class="brand-sub">Generador de prompt diario</span>
+      </span>
+    </a>
+    <div class="header-actions">
+      <button id="themeToggle" class="theme-toggle" type="button" aria-label="Cambiar tema">
+        <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/></svg>
+      </button>
     </div>
+  </div>
+</header>
+
+<main class="container" id="top">
+
+  <section class="hero">
+    <h1>Generador de <span class="grad">boletín diario</span></h1>
+    <p>Completá los datos, elegí el formato y copiá el prompt para ChatGPT o Grok.</p>
+  </section>
+
+  <!-- FECHA -->
+  <div class="section">
+    <div class="sec-hdr"><h2>Fecha del boletín</h2></div>
     <div class="fecha-row">
       <label for="fechaInput">Fecha:</label>
-      <input type="date" id="fechaInput">
+      <input class="input" type="date" id="fechaInput" />
       <span class="fecha-badge" id="fechaPreview">— — —</span>
     </div>
   </div>
 
-  <!-- ═══ CONFIGURACIÓN VISUAL ═══ -->
+  <!-- FORMATO -->
+  <div class="section">
+    <div class="sec-hdr"><h2>Formato de la imagen</h2></div>
+    <div class="segmented" role="radiogroup" aria-label="Formato">
+      <span class="seg-opt">
+        <input type="radio" name="formato" id="fmt_celular" value="celular" checked />
+        <label for="fmt_celular">📱 Celular</label>
+      </span>
+      <span class="seg-opt">
+        <input type="radio" name="formato" id="fmt_pc" value="pc" />
+        <label for="fmt_pc">💻 Computadora <span style="opacity:.75;font-weight:500">(4:3)</span></label>
+      </span>
+    </div>
+    <p class="seg-hint" id="fmtHint">Vertical (2:3), ideal para ver desde el celular.</p>
+  </div>
+
+  <!-- VISUAL -->
   <div class="section">
     <div class="sec-hdr">
-      <h2>🎨 Configuración Visual</h2>
-      <button class="btn btn-ghost" onclick="resetVisual()">↺ Reiniciar visual</button>
+      <h2>Configuración visual</h2>
+      <div class="sec-hdr-btns">
+        <button class="btn btn-ghost" onclick="resetVisual()">↺ Reiniciar visual</button>
+      </div>
     </div>
     <div class="visual-grid">
       <div class="form-group">
         <label>Estilo de fondo</label>
-        <input type="text" id="vis_fondo" placeholder="Ej: crema/beige caricaturesco, ornamentado">
+        <input type="text" id="vis_fondo" placeholder="Ej: crema/beige caricaturesco, ornamentado" />
       </div>
       <div class="form-group">
         <label>Estética general</label>
@@ -332,47 +497,45 @@ header p  { font-size:.88rem; opacity:.8; margin-top:5px; position:relative; }
           <option value="pop art con colores vibrantes">Pop Art</option>
         </select>
       </div>
-      <div class="form-group" style="grid-column:1/-1">
-        <label>Notas adicionales de estilo (opcional)</label>
+      <div class="form-group full">
+        <label>Notas adicionales (opcional)</label>
         <textarea id="vis_notas" placeholder="Ej: usar colores pastel, bordes redondeados, tipografía divertida..."></textarea>
       </div>
     </div>
   </div>
 
-  <!-- ═══ TARJETAS ═══ -->
+  <!-- TARJETAS -->
   <div class="section">
     <div class="sec-hdr">
-      <h2>🃏 Tarjetas (8 en total)</h2>
-      <button class="btn btn-purple" onclick="openCardStyleModal()">🎴 Estilo de tarjetas</button>
-      <button class="btn btn-danger" onclick="confirmClearCards()">🗑 Limpiar todas las tarjetas</button>
+      <h2>Tarjetas (8 en total)</h2>
+      <div class="sec-hdr-btns">
+        <button class="btn" onclick="openCardStyleModal()">🎴 Estilo de tarjetas</button>
+        <button class="btn btn-danger" onclick="confirmClearCards()">🗑 Limpiar todas</button>
+      </div>
     </div>
     <div class="cards-grid" id="cardsGrid"></div>
   </div>
 
-  <!-- ═══ ATRASADOS ═══ -->
+  <!-- ATRASADOS -->
   <div class="section">
-    <div class="sec-hdr">
-      <h2>🔢 Números Atrasados</h2>
-    </div>
+    <div class="sec-hdr"><h2>Números atrasados</h2></div>
     <div id="atrasadosContainer"></div>
   </div>
 
-</div><!-- /container -->
-
-<div class="container" style="padding-top:0">
-  <button class="btn-generar" onclick="validateAndGenerate()">⚡ GENERAR PROMPT</button>
+  <button class="btn-generar" onclick="validateAndGenerate()">⚡ Generar prompt</button>
 
   <div class="output-box" id="outputBox">
-    <h2>✅ Prompt listo — copialo y pegalo en ChatGPT o Grok</h2>
+    <h2>✅ Prompt listo</h2>
     <textarea id="promptOutput" readonly></textarea>
     <div class="output-actions">
       <button class="btn-copiar" id="btnCopiar" onclick="copiarPrompt()">📋 Copiar prompt</button>
     </div>
-    <p class="tip-text">Pegá el texto en el chat de ChatGPT (usa DALL·E) o Grok y pedile que genere la imagen.</p>
+    <p class="tip-text">Pegalo en el chat de ChatGPT (DALL·E) o Grok y pedile que genere la imagen.</p>
   </div>
-</div>
 
-<!-- ═══ MODAL ADVERTENCIA ═══ -->
+</main>
+
+<!-- MODAL ADVERTENCIA -->
 <div class="modal-overlay" id="warnModal">
   <div class="modal">
     <div class="modal-icon">⚠️</div>
@@ -381,44 +544,44 @@ header p  { font-size:.88rem; opacity:.8; margin-top:5px; position:relative; }
     <div class="modal-list" id="warnList"></div>
     <p>Podés continuar igual — el prompt se generará con los espacios vacíos.</p>
     <div class="modal-btns">
-      <button class="btn btn-ghost" onclick="closeModal('warnModal')">← Volver a corregir</button>
+      <button class="btn btn-ghost" onclick="closeModal('warnModal')">← Volver</button>
       <button class="btn btn-danger" id="btnContinueAnyway">Generar igual →</button>
     </div>
   </div>
 </div>
 
-<!-- ═══ MODAL ESTILO DE TARJETAS ═══ -->
+<!-- MODAL ESTILO DE TARJETAS -->
 <div class="modal-overlay" id="cardStyleModal">
   <div class="modal">
     <div class="modal-icon">🎴</div>
-    <h3>Estilo de Tarjetas</h3>
+    <h3>Estilo de tarjetas</h3>
     <p>Personalizá cómo se describe cada tarjeta en el prompt.</p>
     <div class="card-style-grid">
       <div class="form-group">
         <label>Marco y fondo</label>
-        <input type="text" id="cs_marco" placeholder="Ej: Marco rectangular con fondo crema y borde marrón ornamentado">
+        <input type="text" id="cs_marco" placeholder="Ej: Marco rectangular con fondo crema y borde marrón ornamentado" />
       </div>
       <div class="form-group">
         <label>Color del título</label>
-        <input type="text" id="cs_titulo" placeholder="Ej: Título arriba en color (verde, rojo o negro según corresponda)">
+        <input type="text" id="cs_titulo" placeholder="Ej: Título arriba en color (verde, rojo o negro según corresponda)" />
       </div>
       <div class="form-group">
         <label>Ilustración</label>
-        <input type="text" id="cs_ilus" placeholder="Ej: Ilustración caricaturesca central">
+        <input type="text" id="cs_ilus" placeholder="Ej: Ilustración caricaturesca central" />
       </div>
       <div class="form-group">
         <label>Número / círculo</label>
-        <input type="text" id="cs_numero" placeholder="Ej: Número de 2 dígitos abajo en círculo azul con borde dorado">
+        <input type="text" id="cs_numero" placeholder="Ej: Número de 2 dígitos abajo en círculo azul con borde dorado" />
       </div>
     </div>
     <div class="modal-btns">
-      <button class="btn btn-ghost" onclick="resetCardStyle()">↺ Restaurar original</button>
-      <button class="btn btn-purple" onclick="saveCardStyleAndClose()">✅ Guardar</button>
+      <button class="btn btn-ghost" onclick="resetCardStyle()">↺ Restaurar</button>
+      <button class="btn btn-primary" onclick="saveCardStyleAndClose()">✅ Guardar</button>
     </div>
   </div>
 </div>
 
-<!-- ═══ MODAL CONFIRMACIÓN ═══ -->
+<!-- MODAL CONFIRMACIÓN -->
 <div class="modal-overlay" id="confirmModal">
   <div class="modal">
     <div class="modal-icon">🗑️</div>
@@ -458,7 +621,7 @@ const DEFAULT_AT = [
 ];
 
 const DEFAULT_VISUAL = {
-  fondo: "crema/beige caricaturesco, ornamentado. Evitar estilo vintage.",
+  fondo: "rojo caricaturesco, ornamentado.",
   estilo: "caricaturesco y colorido tipo boletín de agencia de quiniela",
   notas: ""
 };
@@ -470,14 +633,37 @@ const DEFAULT_CARD_STYLE = {
   numero: "Número de 2 dígitos abajo en círculo azul con borde dorado"
 };
 
+const FORMATOS = {
+  celular: {
+    label: "Vertical (2:3), ideal para ver desde el celular.",
+    line: "Formato vertical (proporción aprox 2:3), optimizado para visualizarse en celular"
+  },
+  pc: {
+    label: "Horizontal 4:3, pensado para verse en computadora.",
+    line: "Formato horizontal con proporción 4:3, optimizado para visualizarse en computadora"
+  }
+};
+
+/* ══════════════════════════════════════════
+   THEME TOGGLE
+══════════════════════════════════════════ */
+(function () {
+  const btn = document.getElementById('themeToggle');
+  btn.addEventListener('click', () => {
+    const cur = document.documentElement.getAttribute('data-theme') || 'light';
+    const next = cur === 'light' ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', next);
+    try { localStorage.setItem('b217-theme', next); } catch (e) {}
+  });
+})();
+
 /* ══════════════════════════════════════════
    STORAGE
 ══════════════════════════════════════════ */
 function saveAll() {
   const d = {};
-  // fecha
   d.fecha = g("fechaInput");
-  // cards
+  d.formato = (document.querySelector('input[name="formato"]:checked') || {}).value || "celular";
   d.cards = [];
   for (let i = 1; i <= 8; i++) {
     d.cards.push({
@@ -487,28 +673,14 @@ function saveAll() {
       num2:   g(`num2_${i}`) || "",
     });
   }
-  // atrasados
-  d.at = PROVINCIAS.map((_, gi) =>
-    [0,1,2,3,4].map(ni => g(`at_${gi}_${ni}`))
-  );
-  // visual
-  d.vis = {
-    fondo:  g("vis_fondo"),
-    estilo: g("vis_estilo"),
-    notas:  g("vis_notas"),
-  };
-  // card style
-  d.cs = {
-    marco:  g("cs_marco"),
-    titulo: g("cs_titulo"),
-    ilus:   g("cs_ilus"),
-    numero: g("cs_numero"),
-  };
-  localStorage.setItem("ag217", JSON.stringify(d));
+  d.at = PROVINCIAS.map((_, gi) => [0,1,2,3,4].map(ni => g(`at_${gi}_${ni}`)));
+  d.vis = { fondo: g("vis_fondo"), estilo: g("vis_estilo"), notas: g("vis_notas") };
+  d.cs  = { marco: g("cs_marco"), titulo: g("cs_titulo"), ilus: g("cs_ilus"), numero: g("cs_numero") };
+  localStorage.setItem("b217", JSON.stringify(d));
 }
 
 function loadAll() {
-  const raw = localStorage.getItem("ag217");
+  const raw = localStorage.getItem("b217");
   if (!raw) return null;
   try { return JSON.parse(raw); } catch(e) { return null; }
 }
@@ -517,32 +689,36 @@ function loadAll() {
    HELPERS
 ══════════════════════════════════════════ */
 function g(id) { return (document.getElementById(id)?.value || "").trim(); }
-
-function onlyNums(e) {
-  e.target.value = e.target.value.replace(/[^0-9]/g,"").slice(0,2);
-}
-
+function onlyNums(e) { e.target.value = e.target.value.replace(/[^0-9]/g,"").slice(0,2); }
 function formatFecha(val) {
   if (!val) return "— — —";
   const [y,m,d] = val.split("-");
   return `${parseInt(d)} DE ${MESES[parseInt(m)-1]}`;
 }
-
-function todayISO() {
-  return new Date().toISOString().slice(0,10);
-}
+function todayISO() { return new Date().toISOString().slice(0,10); }
+function esc(s) { return (s||"").replace(/"/g,"&quot;").replace(/</g,"&lt;"); }
 
 /* ══════════════════════════════════════════
    FECHA
 ══════════════════════════════════════════ */
 const fechaInput = document.getElementById("fechaInput");
 const fechaPreview = document.getElementById("fechaPreview");
-
 fechaInput.value = todayISO();
 fechaPreview.textContent = formatFecha(fechaInput.value);
 fechaInput.addEventListener("change", () => {
   fechaPreview.textContent = formatFecha(fechaInput.value);
   saveAll();
+});
+
+/* ══════════════════════════════════════════
+   FORMATO
+══════════════════════════════════════════ */
+function updateFormatoHint() {
+  const v = (document.querySelector('input[name="formato"]:checked') || {}).value || "celular";
+  document.getElementById("fmtHint").textContent = FORMATOS[v].label;
+}
+document.querySelectorAll('input[name="formato"]').forEach(r => {
+  r.addEventListener("change", () => { updateFormatoHint(); saveAll(); });
 });
 
 /* ══════════════════════════════════════════
@@ -564,12 +740,12 @@ function buildCards(data) {
       </div>
       <label>Título</label>
       <input type="text" id="titulo_${n}" value="${esc(card.titulo)}" placeholder="Ej: DÍA DEL ESCRITOR">
-      <label>Ilustración <span style="font-weight:400;color:#ccc">(opcional)</span></label>
+      <label>Ilustración <span style="font-weight:400;color:var(--text-mute);text-transform:none;letter-spacing:0">(opcional)</span></label>
       <textarea id="ilus_${n}" placeholder="Describí la imagen (puede quedar vacío)">${esc(card.ilus)}</textarea>
       <label>Número(s)</label>
       <div class="num-row" id="numrow_${n}">
         <input class="num-input" type="text" id="num1_${n}" maxlength="2" value="${esc(card.num1)}" placeholder="00">
-        <div id="num2wrap_${n}" style="display:${hasNum2?'flex':'none'};align-items:center;gap:5px">
+        <div id="num2wrap_${n}" style="display:${hasNum2?'flex':'none'};align-items:center;gap:6px">
           <input class="num-input" type="text" id="num2_${n}" maxlength="2" value="${esc(card.num2||'')}" placeholder="00">
           <button class="btn-rmnum" onclick="removeNum(${n})" title="Quitar 2° número">✕</button>
         </div>
@@ -578,7 +754,6 @@ function buildCards(data) {
     `;
     grid.appendChild(div);
 
-    // live save
     ["titulo","ilus"].forEach(f => {
       document.getElementById(`${f}_${n}`).addEventListener("input", saveAll);
     });
@@ -603,8 +778,6 @@ function removeNum(n) {
   saveAll();
 }
 
-function esc(s) { return (s||"").replace(/"/g,"&quot;").replace(/</g,"&lt;"); }
-
 /* ══════════════════════════════════════════
    ATRASADOS
 ══════════════════════════════════════════ */
@@ -621,20 +794,19 @@ function buildAtrasados(data) {
     div.innerHTML = `
       <div class="at-hdr">
         <h3>📍 ${prov}</h3>
-        <button class="btn btn-warning" onclick="confirmClearProvincia(${gi})">🗑 Limpiar</button>
+        <button class="btn btn-warn" onclick="confirmClearProvincia(${gi})">🗑 Limpiar</button>
       </div>
       <div class="nums-row">${inputs}</div>
     `;
     cont.appendChild(div);
     for (let ni = 0; ni < 5; ni++) {
-      const inp = document.getElementById(`at_${gi}_${ni}`);
-      inp.addEventListener("input", e => { onlyNums(e); saveAll(); });
+      document.getElementById(`at_${gi}_${ni}`).addEventListener("input", e => { onlyNums(e); saveAll(); });
     }
   });
 }
 
 /* ══════════════════════════════════════════
-   VISUAL CONFIG
+   VISUAL / CARD STYLE
 ══════════════════════════════════════════ */
 function loadVisual(vis) {
   const v = vis || DEFAULT_VISUAL;
@@ -642,15 +814,8 @@ function loadVisual(vis) {
   document.getElementById("vis_estilo").value = v.estilo || DEFAULT_VISUAL.estilo;
   document.getElementById("vis_notas").value  = v.notas  || "";
 }
+function resetVisual() { loadVisual(DEFAULT_VISUAL); saveAll(); }
 
-function resetVisual() {
-  loadVisual(DEFAULT_VISUAL);
-  saveAll();
-}
-
-/* ══════════════════════════════════════════
-   CARD STYLE MODAL
-══════════════════════════════════════════ */
 function loadCardStyle(cs) {
   const s = cs || DEFAULT_CARD_STYLE;
   document.getElementById("cs_marco").value  = s.marco  || DEFAULT_CARD_STYLE.marco;
@@ -658,26 +823,16 @@ function loadCardStyle(cs) {
   document.getElementById("cs_ilus").value   = s.ilus   || DEFAULT_CARD_STYLE.ilus;
   document.getElementById("cs_numero").value = s.numero || DEFAULT_CARD_STYLE.numero;
 }
-
-function openCardStyleModal() {
-  document.getElementById("cardStyleModal").classList.add("active");
-}
-
-function resetCardStyle() {
-  loadCardStyle(DEFAULT_CARD_STYLE);
-}
-
-function saveCardStyleAndClose() {
-  saveAll();
-  closeModal("cardStyleModal");
-}
+function openCardStyleModal() { document.getElementById("cardStyleModal").classList.add("active"); }
+function resetCardStyle() { loadCardStyle(DEFAULT_CARD_STYLE); }
+function saveCardStyleAndClose() { saveAll(); closeModal("cardStyleModal"); }
 
 ["vis_fondo","vis_estilo","vis_notas"].forEach(id => {
   document.getElementById(id)?.addEventListener("input", saveAll);
 });
 
 /* ══════════════════════════════════════════
-   INIT — LOAD FROM STORAGE
+   INIT
 ══════════════════════════════════════════ */
 (function init() {
   const saved = loadAll();
@@ -685,6 +840,10 @@ function saveCardStyleAndClose() {
     if (saved.fecha) {
       fechaInput.value = saved.fecha;
       fechaPreview.textContent = formatFecha(saved.fecha);
+    }
+    if (saved.formato) {
+      const r = document.getElementById(`fmt_${saved.formato}`);
+      if (r) r.checked = true;
     }
     buildCards(saved.cards);
     buildAtrasados(saved.at);
@@ -696,6 +855,7 @@ function saveCardStyleAndClose() {
     loadVisual(null);
     loadCardStyle(null);
   }
+  updateFormatoHint();
 })();
 
 /* ══════════════════════════════════════════
@@ -711,7 +871,6 @@ function confirmClearCards() {
     }
   );
 }
-
 function confirmClearProvincia(gi) {
   showConfirm(
     `¿Limpiar atrasados de ${PROVINCIAS[gi]}?`,
@@ -729,10 +888,7 @@ function confirmClearProvincia(gi) {
 /* ══════════════════════════════════════════
    MODALS
 ══════════════════════════════════════════ */
-function closeModal(id) {
-  document.getElementById(id).classList.remove("active");
-}
-
+function closeModal(id) { document.getElementById(id).classList.remove("active"); }
 let _confirmCallback = null;
 function showConfirm(title, msg, cb) {
   document.getElementById("confirmTitle").textContent = title;
@@ -744,15 +900,12 @@ document.getElementById("btnConfirmOk").addEventListener("click", () => {
   closeModal("confirmModal");
   if (_confirmCallback) _confirmCallback();
 });
-
 function showWarnModal(warnings, onContinue) {
   document.getElementById("warnList").innerHTML = warnings.map(w => `• ${w}`).join("<br>");
   document.getElementById("warnModal").classList.add("active");
   const btn = document.getElementById("btnContinueAnyway");
   btn.onclick = () => { closeModal("warnModal"); onContinue(); };
 }
-
-// close modals on overlay click
 document.querySelectorAll(".modal-overlay").forEach(el => {
   el.addEventListener("click", e => { if (e.target === el) el.classList.remove("active"); });
 });
@@ -762,40 +915,30 @@ document.querySelectorAll(".modal-overlay").forEach(el => {
 ══════════════════════════════════════════ */
 function validateAndGenerate() {
   const warnings = [];
-
   for (let i = 1; i <= 8; i++) {
-    const titulo = g(`titulo_${i}`);
-    const num1   = g(`num1_${i}`);
-    if (!titulo) warnings.push(`Tarjeta ${i}: falta el título`);
-    if (!num1)   warnings.push(`Tarjeta ${i}: falta el número`);
+    if (!g(`titulo_${i}`)) warnings.push(`Tarjeta ${i}: falta el título`);
+    if (!g(`num1_${i}`))   warnings.push(`Tarjeta ${i}: falta el número`);
   }
-
   PROVINCIAS.forEach((prov, gi) => {
     for (let ni = 0; ni < 5; ni++) {
-      if (!g(`at_${gi}_${ni}`)) {
-        warnings.push(`Atrasados ${prov}: hay números vacíos`);
-        break;
-      }
+      if (!g(`at_${gi}_${ni}`)) { warnings.push(`Atrasados ${prov}: hay números vacíos`); break; }
     }
   });
-
-  if (warnings.length > 0) {
-    showWarnModal(warnings, generarPrompt);
-  } else {
-    generarPrompt();
-  }
+  if (warnings.length > 0) showWarnModal(warnings, generarPrompt);
+  else generarPrompt();
 }
 
 /* ══════════════════════════════════════════
    GENERAR PROMPT
 ══════════════════════════════════════════ */
 function generarPrompt() {
-  const fecha  = formatFecha(g("fechaInput")) || "[FECHA]";
-  const fondo  = g("vis_fondo")  || DEFAULT_VISUAL.fondo;
-  const estilo = g("vis_estilo") || DEFAULT_VISUAL.estilo;
-  const notas  = g("vis_notas");
+  const fecha   = formatFecha(g("fechaInput")) || "[FECHA]";
+  const fondo   = g("vis_fondo")  || DEFAULT_VISUAL.fondo;
+  const estilo  = g("vis_estilo") || DEFAULT_VISUAL.estilo;
+  const notas   = g("vis_notas");
+  const fmtVal  = (document.querySelector('input[name="formato"]:checked') || {}).value || "celular";
+  const fmtLine = FORMATOS[fmtVal].line;
 
-  // tarjetas
   let fila1 = "", fila2 = "";
   for (let i = 1; i <= 8; i++) {
     const titulo = g(`titulo_${i}`) || `[TÍTULO_${i}]`;
@@ -807,7 +950,6 @@ function generarPrompt() {
     if (i <= 4) fila1 += line; else fila2 += line;
   }
 
-  // atrasados
   const atLines = PROVINCIAS.map((prov, gi) => {
     const nums = [0,1,2,3,4].map(ni => g(`at_${gi}_${ni}`) || "??").join(" ");
     return `- "ATRASADOS ${prov}" con 5 números en círculos azules: ${nums}`;
@@ -819,7 +961,7 @@ function generarPrompt() {
 `Generá una imagen estilo boletín de quiniela argentino con el siguiente diseño exacto:
 
 ESTRUCTURA GENERAL:
-- Formato vertical (proporción aprox 2:3)
+- ${fmtLine}
 - Fondo color ${fondo}
 - Estética ${estilo}
 
@@ -838,7 +980,7 @@ Cada tarjeta tiene:
 
 FILA 1:
 ${fila1.trimEnd()}
-MARCA DE AGUA:- En el centro de las tarjetas, sutil y semitransparente, texto que diga "DATOS DE LA AGENCIA 217" como marca de agua (no como título prominente)
+MARCA DE AGUA:- En la página de manera diagonal, transparente pero notoria, moderada sin sobrellenar, con el texto "AGENCIA 217" como marca de agua (no como título prominente)
 FILA 2:
 ${fila2.trimEnd()}
 SECCIÓN ATRASADOS (parte inferior):
@@ -848,7 +990,7 @@ ${atLines}
 
 DECORACIÓN ESQUINA INFERIOR DERECHA:
 - Ilustración de bolillero/tómbola de lotería con bolillas numeradas saliendo
-- Cartel que diga "SUERTE" debajo del bolillero
+- Cartel que diga "AGENCIA 217" debajo del bolillero
 
 ESTILO VISUAL:
 - Caricaturas vibrantes y alegres
@@ -856,7 +998,7 @@ ESTILO VISUAL:
 - Tipografía bold y llamativa
 - Aspecto de boletín impreso tradicional argentino
 - Texto en español${estiloExtra}
-- En la parte inferior al final que diga "JUGAR COMPULSIVAMENTE ES PERJUDICIAL PARA LA SALUD" en el margen de abajo.`;
+- En el margen inferior, incluí una frase motivadora corta para el día.`;
 
   document.getElementById("promptOutput").value = prompt;
   const box = document.getElementById("outputBox");
