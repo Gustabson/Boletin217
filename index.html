@@ -515,28 +515,39 @@ main { padding-bottom: 60px; }
     <div class="cards-grid" id="cardsGrid"></div>
   </div>
 
-  <!-- ATRASADOS / SALIDORES -->
+  <!-- SECCIÓN INFERIOR: Atrasados / Salidores / La Cruz (mutuamente excluyente) -->
   <div class="section">
     <div class="sec-hdr">
-      <h2 id="atTitle">Números atrasados</h2>
-      <div class="sec-hdr-btns">
-        <button class="btn" id="btnToggleModo" onclick="toggleModo()">🔁 Cambiar a salidores</button>
+      <h2 id="atTitle">Sección inferior</h2>
+      <div class="sec-hdr-btns" id="provBtns">
         <button class="btn btn-primary" onclick="addProv()">+ Provincia</button>
       </div>
     </div>
-    <div id="atrasadosContainer"></div>
-  </div>
 
-  <!-- LA CRUZ -->
-  <div class="section">
-    <div class="sec-hdr">
-      <h2>La cruz del día</h2>
+    <div class="segmented" role="radiogroup" aria-label="Modo de sección inferior" style="margin-bottom:14px">
+      <span class="seg-opt">
+        <input type="radio" name="modo" id="modo_atrasados" value="atrasados" checked />
+        <label for="modo_atrasados">📉 Atrasados</label>
+      </span>
+      <span class="seg-opt">
+        <input type="radio" name="modo" id="modo_salidores" value="salidores" />
+        <label for="modo_salidores">📈 Salidores</label>
+      </span>
+      <span class="seg-opt">
+        <input type="radio" name="modo" id="modo_cruz" value="cruz" />
+        <label for="modo_cruz">✚ La Cruz</label>
+      </span>
     </div>
-    <label class="seg-opt" style="display:inline-flex;align-items:center;gap:10px;cursor:pointer">
-      <input type="checkbox" id="cruzOn" style="width:18px;height:18px;accent-color:var(--accent);cursor:pointer" />
-      <span style="font-size:.92rem;color:var(--text)">Incluir cuadro de <strong>La Cruz</strong> en el prompt</span>
-    </label>
-    <div id="cruzPreview" style="margin-top:12px;font-size:.85rem;color:var(--text-mute)"></div>
+
+    <div id="atrasadosContainer"></div>
+
+    <div id="cruzPanel" style="display:none">
+      <p style="margin:0 0 10px;color:var(--text-soft);font-size:.92rem">
+        La Cruz se calcula automáticamente desde la fecha. En el prompt se inyecta el cuadro
+        completo con los 8 números ya resueltos.
+      </p>
+      <div id="cruzPreview" style="font-size:.9rem;color:var(--text-mute)"></div>
+    </div>
   </div>
 
   <button class="btn-generar" onclick="validateAndGenerate()">⚡ Generar prompt</button>
@@ -655,9 +666,9 @@ const FORMATOS = {
   pc:      { line: "Formato horizontal con proporción 4:3, optimizado para visualizarse en computadora" }
 };
 
-/* Estado dinámico de atrasados/salidores */
+/* Estado dinámico de la sección inferior */
 let atState = {
-  modo: "atrasados", // o "salidores"
+  modo: "atrasados", // "atrasados" | "salidores" | "cruz"
   provs: PROVINCIAS.map((name, i) => ({ name, nums: [...DEFAULT_AT[i]] }))
 };
 
@@ -693,7 +704,6 @@ function saveAll() {
   // sync atState desde el DOM antes de guardar
   syncAtStateFromDOM();
   d.atState = atState;
-  d.cruz = document.getElementById("cruzOn")?.checked || false;
   d.vis = { fondo: g("vis_fondo"), estilo: g("vis_estilo"), notas: g("vis_notas") };
   d.cs  = { marco: g("cs_marco"), titulo: g("cs_titulo"), ilus: g("cs_ilus"), numero: g("cs_numero") };
   localStorage.setItem("b217", JSON.stringify(d));
@@ -798,6 +808,7 @@ function removeNum(n) {
    ATRASADOS / SALIDORES (dinámicos)
 ══════════════════════════════════════════ */
 function syncAtStateFromDOM() {
+  if (atState.modo === "cruz") return;
   atState.provs.forEach((p, gi) => {
     const nameEl = document.getElementById(`atname_${gi}`);
     if (nameEl) p.name = (nameEl.value || "").trim().toUpperCase();
@@ -810,11 +821,23 @@ function syncAtStateFromDOM() {
 
 function renderAtrasados() {
   const cont = document.getElementById("atrasadosContainer");
+  const cruzPanel = document.getElementById("cruzPanel");
+  const provBtns = document.getElementById("provBtns");
   cont.innerHTML = "";
-  document.getElementById("atTitle").textContent =
-    atState.modo === "atrasados" ? "Números atrasados" : "Números salidores";
-  document.getElementById("btnToggleModo").textContent =
-    atState.modo === "atrasados" ? "🔁 Cambiar a salidores" : "🔁 Cambiar a atrasados";
+
+  const titles = { atrasados: "Números atrasados", salidores: "Números salidores", cruz: "La cruz del día" };
+  document.getElementById("atTitle").textContent = titles[atState.modo] || titles.atrasados;
+
+  if (atState.modo === "cruz") {
+    cont.style.display = "none";
+    cruzPanel.style.display = "block";
+    provBtns.style.display = "none";
+    renderCruzPreview();
+    return;
+  }
+  cont.style.display = "";
+  cruzPanel.style.display = "none";
+  provBtns.style.display = "";
 
   atState.provs.forEach((prov, gi) => {
     const div = document.createElement("div");
@@ -850,11 +873,14 @@ function renderAtrasados() {
   });
 }
 
-function toggleModo() {
-  atState.modo = atState.modo === "atrasados" ? "salidores" : "atrasados";
-  renderAtrasados();
-  saveAll();
-}
+document.querySelectorAll('input[name="modo"]').forEach(r => {
+  r.addEventListener("change", () => {
+    syncAtStateFromDOM();
+    atState.modo = (document.querySelector('input[name="modo"]:checked') || {}).value || "atrasados";
+    renderAtrasados();
+    saveAll();
+  });
+});
 
 function addProv() {
   syncAtStateFromDOM();
@@ -948,10 +974,8 @@ function pickerToDate(val) {
   return new Date(y, m-1, d);
 }
 function renderCruzPreview() {
-  const on = document.getElementById("cruzOn")?.checked;
   const el = document.getElementById("cruzPreview");
   if (!el) return;
-  if (!on) { el.textContent = "Activalo para incluir el cuadro en el prompt (se calcula desde la fecha)."; return; }
   const d = pickerToDate(g("fechaInput")) || new Date();
   const c = computeCruz(d);
   el.innerHTML =
@@ -959,8 +983,7 @@ function renderCruzPreview() {
     `puntas ${c.outerTL}-${c.outerTR}-${c.outerBR}-${c.outerBL} · ` +
     `centro DÍA ${c.top} / MES ${c.right} / AÑO ${c.bottom} / SUMA ${c.left}`;
 }
-document.getElementById("cruzOn").addEventListener("change", () => { renderCruzPreview(); saveAll(); });
-fechaInput.addEventListener("change", renderCruzPreview);
+fechaInput.addEventListener("change", () => { if (atState.modo === "cruz") renderCruzPreview(); });
 
 /* ══════════════════════════════════════════
    INIT
@@ -979,9 +1002,11 @@ fechaInput.addEventListener("change", renderCruzPreview);
     buildCards(saved.cards);
     if (saved.atState && Array.isArray(saved.atState.provs)) {
       atState = saved.atState;
+      if (!["atrasados","salidores","cruz"].includes(atState.modo)) atState.modo = "atrasados";
     }
+    const modoRadio = document.getElementById(`modo_${atState.modo}`);
+    if (modoRadio) modoRadio.checked = true;
     renderAtrasados();
-    if (saved.cruz) document.getElementById("cruzOn").checked = true;
     loadVisual(saved.vis);
     loadCardStyle(saved.cs);
   } else {
@@ -990,7 +1015,6 @@ fechaInput.addEventListener("change", renderCruzPreview);
     loadVisual(null);
     loadCardStyle(null);
   }
-  renderCruzPreview();
 })();
 
 /* ══════════════════════════════════════════
@@ -1055,11 +1079,13 @@ function validateAndGenerate() {
     if (!g(`titulo_${i}`)) warnings.push(`Tarjeta ${i}: falta el título`);
     if (!g(`num1_${i}`))   warnings.push(`Tarjeta ${i}: falta el número`);
   }
-  const palabra = atState.modo === "atrasados" ? "Atrasados" : "Salidores";
-  atState.provs.forEach(p => {
-    if (!p.name) warnings.push(`${palabra}: hay una provincia sin nombre`);
-    if (p.nums.some(n => !n || !n.trim())) warnings.push(`${palabra} ${p.name || '(sin nombre)'}: hay números vacíos`);
-  });
+  if (atState.modo !== "cruz") {
+    const palabra = atState.modo === "atrasados" ? "Atrasados" : "Salidores";
+    atState.provs.forEach(p => {
+      if (!p.name) warnings.push(`${palabra}: hay una provincia sin nombre`);
+      if (p.nums.some(n => !n || !n.trim())) warnings.push(`${palabra} ${p.name || '(sin nombre)'}: hay números vacíos`);
+    });
+  }
   if (warnings.length > 0) showWarnModal(warnings, generarPrompt);
   else generarPrompt();
 }
@@ -1086,31 +1112,33 @@ function generarPrompt() {
     if (i <= 4) fila1 += line; else fila2 += line;
   }
 
-  const palabra = atState.modo === "atrasados" ? "ATRASADOS" : "SALIDORES";
-  const atLines = atState.provs.map(p => {
-    const nums = p.nums.map(n => (n && n.trim()) ? n.trim() : "??").join(" ");
-    return `- "${palabra} ${p.name || '(SIN NOMBRE)'}" con ${p.nums.length} números en círculos azules: ${nums}`;
-  }).join("\n");
-
-  // La Cruz (opcional, números calculados desde la fecha)
-  let cruzBlock = "";
-  if (document.getElementById("cruzOn")?.checked) {
+  let seccionInferior = "", seccionTitulo = "";
+  if (atState.modo === "cruz") {
     const d = pickerToDate(g("fechaInput")) || new Date();
     const c = computeCruz(d);
-    cruzBlock =
-`\nCUADRO "LA CRUZ DEL DÍA" (recuadro lateral o inferior, sobre fondo crema con borde marrón ornamentado):
-- Una cruz/X formada por 4 círculos rojos rellenos en las puntas (arriba-izq, arriba-der, abajo-der, abajo-izq) unidos por dos líneas diagonales finas marrones, y 4 círculos blancos con borde rojo en el centro (uno arriba, uno a cada lado y uno abajo).
-- Círculos rojos rellenos (puntas), número grande blanco:
-  · arriba-izq: ${c.outerTL}
-  · arriba-der: ${c.outerTR}
-  · abajo-der: ${c.outerBR}
-  · abajo-izq: ${c.outerBL}
-- Círculos blancos centrales con borde rojo y número rojo:
-  · centro-arriba (etiqueta "DÍA"): ${c.top}
-  · centro-derecha (etiqueta "MES"): ${c.right}
-  · centro-abajo (etiqueta "AÑO"): ${c.bottom}
-  · centro-izquierda (etiqueta "SUMA"): ${c.left}
-- Tipografía serif elegante, colores vino/borgoña.\n`;
+    seccionTitulo = `SECCIÓN "LA CRUZ DEL DÍA" (parte inferior)`;
+    seccionInferior =
+`Cuadro sobre fondo crema con borde marrón ornamentado, mostrando la cruz numerológica del día. Composición:
+- Una X formada por 4 círculos grandes rojos rellenos en las puntas (arriba-izq, arriba-der, abajo-der, abajo-izq), unidos por dos líneas diagonales finas marrones.
+- Sobre esas diagonales, 4 círculos blancos con borde rojo en posición de cruz central: uno arriba, uno a la derecha, uno abajo, uno a la izquierda.
+- Encabezado del cuadro: "LA CRUZ DEL DÍA".
+Números exactos (NO calcular, usar tal cual):
+- Punta arriba-izq (círculo rojo, número blanco grande): ${c.outerTL}
+- Punta arriba-der (círculo rojo, número blanco grande): ${c.outerTR}
+- Punta abajo-der (círculo rojo, número blanco grande): ${c.outerBR}
+- Punta abajo-izq (círculo rojo, número blanco grande): ${c.outerBL}
+- Centro-arriba (círculo blanco, número rojo, etiqueta "DÍA"): ${c.top}
+- Centro-derecha (círculo blanco, número rojo, etiqueta "MES"): ${c.right}
+- Centro-abajo (círculo blanco, número rojo, etiqueta "AÑO"): ${c.bottom}
+- Centro-izquierda (círculo blanco, número rojo, etiqueta "SUMA"): ${c.left}
+Tipografía serif elegante, colores vino/borgoña.`;
+  } else {
+    const palabra = atState.modo === "atrasados" ? "ATRASADOS" : "SALIDORES";
+    seccionTitulo = `SECCIÓN ${palabra} (parte inferior)`;
+    seccionInferior = atState.provs.map(p => {
+      const nums = p.nums.map(n => (n && n.trim()) ? n.trim() : "??").join(" ");
+      return `- "${palabra} ${p.name || '(SIN NOMBRE)'}" con ${p.nums.length} números en círculos azules: ${nums}`;
+    }).join("\n");
   }
 
   const estiloExtra = notas ? `\n- ${notas}` : "";
@@ -1141,9 +1169,8 @@ ${fila1.trimEnd()}
 MARCA DE AGUA:- En la página de manera diagonal, transparente pero notoria, moderada sin sobrellenar, con el texto "AGENCIA 217" como marca de agua (no como título prominente)
 FILA 2:
 ${fila2.trimEnd()}
-SECCIÓN ${palabra} (parte inferior):
-${atLines}
-${cruzBlock}
+${seccionTitulo}:
+${seccionInferior}
 
 
 DECORACIÓN ESQUINA INFERIOR DERECHA:
