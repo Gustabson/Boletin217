@@ -472,7 +472,6 @@ main { padding-bottom: 60px; }
         <label for="fmt_pc">💻 Computadora <span style="opacity:.75;font-weight:500">(4:3)</span></label>
       </span>
     </div>
-    <p class="seg-hint" id="fmtHint">Vertical (2:3), ideal para ver desde el celular.</p>
   </div>
 
   <!-- VISUAL -->
@@ -516,10 +515,28 @@ main { padding-bottom: 60px; }
     <div class="cards-grid" id="cardsGrid"></div>
   </div>
 
-  <!-- ATRASADOS -->
+  <!-- ATRASADOS / SALIDORES -->
   <div class="section">
-    <div class="sec-hdr"><h2>Números atrasados</h2></div>
+    <div class="sec-hdr">
+      <h2 id="atTitle">Números atrasados</h2>
+      <div class="sec-hdr-btns">
+        <button class="btn" id="btnToggleModo" onclick="toggleModo()">🔁 Cambiar a salidores</button>
+        <button class="btn btn-primary" onclick="addProv()">+ Provincia</button>
+      </div>
+    </div>
     <div id="atrasadosContainer"></div>
+  </div>
+
+  <!-- LA CRUZ -->
+  <div class="section">
+    <div class="sec-hdr">
+      <h2>La cruz del día</h2>
+    </div>
+    <label class="seg-opt" style="display:inline-flex;align-items:center;gap:10px;cursor:pointer">
+      <input type="checkbox" id="cruzOn" style="width:18px;height:18px;accent-color:var(--accent);cursor:pointer" />
+      <span style="font-size:.92rem;color:var(--text)">Incluir cuadro de <strong>La Cruz</strong> en el prompt</span>
+    </label>
+    <div id="cruzPreview" style="margin-top:12px;font-size:.85rem;color:var(--text-mute)"></div>
   </div>
 
   <button class="btn-generar" onclick="validateAndGenerate()">⚡ Generar prompt</button>
@@ -634,14 +651,14 @@ const DEFAULT_CARD_STYLE = {
 };
 
 const FORMATOS = {
-  celular: {
-    label: "Vertical (2:3), ideal para ver desde el celular.",
-    line: "Formato vertical (proporción aprox 2:3), optimizado para visualizarse en celular"
-  },
-  pc: {
-    label: "Horizontal 4:3, pensado para verse en computadora.",
-    line: "Formato horizontal con proporción 4:3, optimizado para visualizarse en computadora"
-  }
+  celular: { line: "Formato vertical (proporción aprox 2:3), optimizado para visualizarse en celular" },
+  pc:      { line: "Formato horizontal con proporción 4:3, optimizado para visualizarse en computadora" }
+};
+
+/* Estado dinámico de atrasados/salidores */
+let atState = {
+  modo: "atrasados", // o "salidores"
+  provs: PROVINCIAS.map((name, i) => ({ name, nums: [...DEFAULT_AT[i]] }))
 };
 
 /* ══════════════════════════════════════════
@@ -673,7 +690,10 @@ function saveAll() {
       num2:   g(`num2_${i}`) || "",
     });
   }
-  d.at = PROVINCIAS.map((_, gi) => [0,1,2,3,4].map(ni => g(`at_${gi}_${ni}`)));
+  // sync atState desde el DOM antes de guardar
+  syncAtStateFromDOM();
+  d.atState = atState;
+  d.cruz = document.getElementById("cruzOn")?.checked || false;
   d.vis = { fondo: g("vis_fondo"), estilo: g("vis_estilo"), notas: g("vis_notas") };
   d.cs  = { marco: g("cs_marco"), titulo: g("cs_titulo"), ilus: g("cs_ilus"), numero: g("cs_numero") };
   localStorage.setItem("b217", JSON.stringify(d));
@@ -713,12 +733,8 @@ fechaInput.addEventListener("change", () => {
 /* ══════════════════════════════════════════
    FORMATO
 ══════════════════════════════════════════ */
-function updateFormatoHint() {
-  const v = (document.querySelector('input[name="formato"]:checked') || {}).value || "celular";
-  document.getElementById("fmtHint").textContent = FORMATOS[v].label;
-}
 document.querySelectorAll('input[name="formato"]').forEach(r => {
-  r.addEventListener("change", () => { updateFormatoHint(); saveAll(); });
+  r.addEventListener("change", saveAll);
 });
 
 /* ══════════════════════════════════════════
@@ -779,30 +795,105 @@ function removeNum(n) {
 }
 
 /* ══════════════════════════════════════════
-   ATRASADOS
+   ATRASADOS / SALIDORES (dinámicos)
 ══════════════════════════════════════════ */
-function buildAtrasados(data) {
+function syncAtStateFromDOM() {
+  atState.provs.forEach((p, gi) => {
+    const nameEl = document.getElementById(`atname_${gi}`);
+    if (nameEl) p.name = (nameEl.value || "").trim().toUpperCase();
+    p.nums = p.nums.map((_, ni) => {
+      const el = document.getElementById(`at_${gi}_${ni}`);
+      return el ? el.value : "";
+    });
+  });
+}
+
+function renderAtrasados() {
   const cont = document.getElementById("atrasadosContainer");
   cont.innerHTML = "";
-  PROVINCIAS.forEach((prov, gi) => {
-    const nums = (data && data[gi]) ? data[gi] : DEFAULT_AT[gi];
+  document.getElementById("atTitle").textContent =
+    atState.modo === "atrasados" ? "Números atrasados" : "Números salidores";
+  document.getElementById("btnToggleModo").textContent =
+    atState.modo === "atrasados" ? "🔁 Cambiar a salidores" : "🔁 Cambiar a atrasados";
+
+  atState.provs.forEach((prov, gi) => {
     const div = document.createElement("div");
     div.className = "at-group";
-    const inputs = nums.map((n, ni) =>
-      `<input class="num-circle" type="text" id="at_${gi}_${ni}" maxlength="2" value="${esc(n)}" placeholder="00">`
+    const inputs = prov.nums.map((n, ni) =>
+      `<span style="display:inline-flex;align-items:center;gap:4px">
+         <input class="num-circle" type="text" id="at_${gi}_${ni}" maxlength="2" value="${esc(n)}" placeholder="00">
+         <button class="btn-rmnum" title="Quitar número" onclick="removeNumProv(${gi}, ${ni})">✕</button>
+       </span>`
     ).join("");
     div.innerHTML = `
       <div class="at-hdr">
-        <h3>📍 ${prov}</h3>
-        <button class="btn btn-warn" onclick="confirmClearProvincia(${gi})">🗑 Limpiar</button>
+        <input id="atname_${gi}" type="text" value="${esc(prov.name)}"
+               style="font-family:inherit;font-size:.78rem;font-weight:700;color:var(--text-soft);text-transform:uppercase;letter-spacing:.08em;border:none;background:transparent;width:auto;min-width:140px;padding:4px 2px;outline:none;border-bottom:1px dashed transparent;transition:border-color .2s"
+               onfocus="this.style.borderBottomColor='var(--accent)'"
+               onblur="this.style.borderBottomColor='transparent'"/>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn btn-warn" onclick="confirmClearProvincia(${gi})">🗑 Limpiar</button>
+          <button class="btn btn-danger" onclick="removeProv(${gi})" title="Eliminar provincia">✕ Quitar</button>
+        </div>
       </div>
-      <div class="nums-row">${inputs}</div>
+      <div class="nums-row" id="numsrow_${gi}">
+        ${inputs}
+        <button class="btn-addnum" onclick="addNumProv(${gi})" title="Agregar número">＋</button>
+      </div>
     `;
     cont.appendChild(div);
-    for (let ni = 0; ni < 5; ni++) {
+
+    document.getElementById(`atname_${gi}`).addEventListener("input", saveAll);
+    prov.nums.forEach((_, ni) => {
       document.getElementById(`at_${gi}_${ni}`).addEventListener("input", e => { onlyNums(e); saveAll(); });
-    }
+    });
   });
+}
+
+function toggleModo() {
+  atState.modo = atState.modo === "atrasados" ? "salidores" : "atrasados";
+  renderAtrasados();
+  saveAll();
+}
+
+function addProv() {
+  syncAtStateFromDOM();
+  atState.provs.push({ name: "NUEVA PROVINCIA", nums: ["","","",""," "] });
+  // arreglar último (espacio)
+  atState.provs[atState.provs.length - 1].nums = ["","","","",""];
+  renderAtrasados();
+  // focus en el nombre nuevo
+  const idx = atState.provs.length - 1;
+  const el = document.getElementById(`atname_${idx}`);
+  if (el) { el.focus(); el.select(); }
+  saveAll();
+}
+
+function removeProv(gi) {
+  showConfirm(
+    `¿Eliminar ${atState.provs[gi].name || 'esta provincia'}?`,
+    "Se quitará por completo del boletín.",
+    () => {
+      syncAtStateFromDOM();
+      atState.provs.splice(gi, 1);
+      renderAtrasados();
+      saveAll();
+    }
+  );
+}
+
+function addNumProv(gi) {
+  syncAtStateFromDOM();
+  atState.provs[gi].nums.push("");
+  renderAtrasados();
+  saveAll();
+}
+
+function removeNumProv(gi, ni) {
+  syncAtStateFromDOM();
+  atState.provs[gi].nums.splice(ni, 1);
+  renderAtrasados();
+  saveAll();
 }
 
 /* ══════════════════════════════════════════
@@ -832,6 +923,46 @@ function saveCardStyleAndClose() { saveAll(); closeModal("cardStyleModal"); }
 });
 
 /* ══════════════════════════════════════════
+   LA CRUZ (cálculo idéntico a Gustabson/Lacruz)
+══════════════════════════════════════════ */
+function digitSum(n) {
+  n = Math.abs(Math.round(n));
+  while (n >= 10) n = String(n).split('').reduce((s,d) => s + parseInt(d,10), 0);
+  return n;
+}
+function computeCruz(date) {
+  const day = date.getDate(), month = date.getMonth()+1, year = date.getFullYear();
+  const top = digitSum(day), right = digitSum(month), bottom = digitSum(year);
+  const left = digitSum(top + right + bottom);
+  return {
+    top, right, bottom, left,
+    outerTL: digitSum(left + bottom),
+    outerTR: digitSum(left + top),
+    outerBR: digitSum(top + right),
+    outerBL: digitSum(right + bottom)
+  };
+}
+function pickerToDate(val) {
+  if (!val) return null;
+  const [y,m,d] = val.split("-").map(Number);
+  return new Date(y, m-1, d);
+}
+function renderCruzPreview() {
+  const on = document.getElementById("cruzOn")?.checked;
+  const el = document.getElementById("cruzPreview");
+  if (!el) return;
+  if (!on) { el.textContent = "Activalo para incluir el cuadro en el prompt (se calcula desde la fecha)."; return; }
+  const d = pickerToDate(g("fechaInput")) || new Date();
+  const c = computeCruz(d);
+  el.innerHTML =
+    `Vista previa para <strong>${formatFecha(g("fechaInput"))}</strong>: ` +
+    `puntas ${c.outerTL}-${c.outerTR}-${c.outerBR}-${c.outerBL} · ` +
+    `centro DÍA ${c.top} / MES ${c.right} / AÑO ${c.bottom} / SUMA ${c.left}`;
+}
+document.getElementById("cruzOn").addEventListener("change", () => { renderCruzPreview(); saveAll(); });
+fechaInput.addEventListener("change", renderCruzPreview);
+
+/* ══════════════════════════════════════════
    INIT
 ══════════════════════════════════════════ */
 (function init() {
@@ -846,16 +977,20 @@ function saveCardStyleAndClose() { saveAll(); closeModal("cardStyleModal"); }
       if (r) r.checked = true;
     }
     buildCards(saved.cards);
-    buildAtrasados(saved.at);
+    if (saved.atState && Array.isArray(saved.atState.provs)) {
+      atState = saved.atState;
+    }
+    renderAtrasados();
+    if (saved.cruz) document.getElementById("cruzOn").checked = true;
     loadVisual(saved.vis);
     loadCardStyle(saved.cs);
   } else {
     buildCards(null);
-    buildAtrasados(null);
+    renderAtrasados();
     loadVisual(null);
     loadCardStyle(null);
   }
-  updateFormatoHint();
+  renderCruzPreview();
 })();
 
 /* ══════════════════════════════════════════
@@ -872,14 +1007,14 @@ function confirmClearCards() {
   );
 }
 function confirmClearProvincia(gi) {
+  const prov = atState.provs[gi];
   showConfirm(
-    `¿Limpiar atrasados de ${PROVINCIAS[gi]}?`,
-    "Se borrarán los 5 números de esta provincia.",
+    `¿Limpiar ${atState.modo} de ${prov?.name || ''}?`,
+    "Se borrarán todos los números de esta provincia.",
     () => {
-      for (let ni = 0; ni < 5; ni++) {
-        const el = document.getElementById(`at_${gi}_${ni}`);
-        if (el) el.value = "";
-      }
+      syncAtStateFromDOM();
+      atState.provs[gi].nums = atState.provs[gi].nums.map(() => "");
+      renderAtrasados();
       saveAll();
     }
   );
@@ -914,15 +1049,16 @@ document.querySelectorAll(".modal-overlay").forEach(el => {
    VALIDACIÓN
 ══════════════════════════════════════════ */
 function validateAndGenerate() {
+  syncAtStateFromDOM();
   const warnings = [];
   for (let i = 1; i <= 8; i++) {
     if (!g(`titulo_${i}`)) warnings.push(`Tarjeta ${i}: falta el título`);
     if (!g(`num1_${i}`))   warnings.push(`Tarjeta ${i}: falta el número`);
   }
-  PROVINCIAS.forEach((prov, gi) => {
-    for (let ni = 0; ni < 5; ni++) {
-      if (!g(`at_${gi}_${ni}`)) { warnings.push(`Atrasados ${prov}: hay números vacíos`); break; }
-    }
+  const palabra = atState.modo === "atrasados" ? "Atrasados" : "Salidores";
+  atState.provs.forEach(p => {
+    if (!p.name) warnings.push(`${palabra}: hay una provincia sin nombre`);
+    if (p.nums.some(n => !n || !n.trim())) warnings.push(`${palabra} ${p.name || '(sin nombre)'}: hay números vacíos`);
   });
   if (warnings.length > 0) showWarnModal(warnings, generarPrompt);
   else generarPrompt();
@@ -950,10 +1086,32 @@ function generarPrompt() {
     if (i <= 4) fila1 += line; else fila2 += line;
   }
 
-  const atLines = PROVINCIAS.map((prov, gi) => {
-    const nums = [0,1,2,3,4].map(ni => g(`at_${gi}_${ni}`) || "??").join(" ");
-    return `- "ATRASADOS ${prov}" con 5 números en círculos azules: ${nums}`;
+  const palabra = atState.modo === "atrasados" ? "ATRASADOS" : "SALIDORES";
+  const atLines = atState.provs.map(p => {
+    const nums = p.nums.map(n => (n && n.trim()) ? n.trim() : "??").join(" ");
+    return `- "${palabra} ${p.name || '(SIN NOMBRE)'}" con ${p.nums.length} números en círculos azules: ${nums}`;
   }).join("\n");
+
+  // La Cruz (opcional, números calculados desde la fecha)
+  let cruzBlock = "";
+  if (document.getElementById("cruzOn")?.checked) {
+    const d = pickerToDate(g("fechaInput")) || new Date();
+    const c = computeCruz(d);
+    cruzBlock =
+`\nCUADRO "LA CRUZ DEL DÍA" (recuadro lateral o inferior, sobre fondo crema con borde marrón ornamentado):
+- Una cruz/X formada por 4 círculos rojos rellenos en las puntas (arriba-izq, arriba-der, abajo-der, abajo-izq) unidos por dos líneas diagonales finas marrones, y 4 círculos blancos con borde rojo en el centro (uno arriba, uno a cada lado y uno abajo).
+- Círculos rojos rellenos (puntas), número grande blanco:
+  · arriba-izq: ${c.outerTL}
+  · arriba-der: ${c.outerTR}
+  · abajo-der: ${c.outerBR}
+  · abajo-izq: ${c.outerBL}
+- Círculos blancos centrales con borde rojo y número rojo:
+  · centro-arriba (etiqueta "DÍA"): ${c.top}
+  · centro-derecha (etiqueta "MES"): ${c.right}
+  · centro-abajo (etiqueta "AÑO"): ${c.bottom}
+  · centro-izquierda (etiqueta "SUMA"): ${c.left}
+- Tipografía serif elegante, colores vino/borgoña.\n`;
+  }
 
   const estiloExtra = notas ? `\n- ${notas}` : "";
 
@@ -983,9 +1141,9 @@ ${fila1.trimEnd()}
 MARCA DE AGUA:- En la página de manera diagonal, transparente pero notoria, moderada sin sobrellenar, con el texto "AGENCIA 217" como marca de agua (no como título prominente)
 FILA 2:
 ${fila2.trimEnd()}
-SECCIÓN ATRASADOS (parte inferior):
+SECCIÓN ${palabra} (parte inferior):
 ${atLines}
-
+${cruzBlock}
 
 
 DECORACIÓN ESQUINA INFERIOR DERECHA:
