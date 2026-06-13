@@ -2,6 +2,12 @@ name: Actualizar atrasados y salidores
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/actualizar-atrasados.yml"
+      - "scripts/actualizar-atrasados.mjs"
   schedule:
     - cron: "23 */2 * * *"
 
