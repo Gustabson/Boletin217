@@ -19,15 +19,17 @@ jobs:
 
     steps:
       - name: Descargar repositorio
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Configurar Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: "20"
+          node-version: "24"
 
       - name: Consultar fuentes
         run: node scripts/actualizar-atrasados.mjs
+        env:
+          FORCE_READER: "1"
 
       - name: Guardar cambios
         run: |
