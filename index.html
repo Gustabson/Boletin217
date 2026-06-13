@@ -281,6 +281,17 @@ main { padding-bottom: 60px; }
   outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft);
 }
 .card-item textarea { resize: vertical; min-height: 44px; font-size: 0.78rem; }
+.card-type-select {
+  width: 100%; padding: 7px 10px; border: 1px solid var(--border); border-radius: 8px;
+  font-family: inherit; font-size: 0.82rem; font-weight: 600;
+  background: var(--bg-elev); color: var(--text);
+}
+.card-cruz-panel {
+  display: none; margin-top: 10px; padding: 12px;
+  border: 1px dashed var(--accent); border-radius: 10px;
+  background: var(--accent-soft); color: var(--text-soft); font-size: 0.8rem;
+}
+.card-cruz-panel p { margin: 0 0 10px; }
 
 .num-row { display: flex; align-items: center; gap: 8px; margin-top: 4px; flex-wrap: wrap; }
 .num-input {
@@ -334,6 +345,13 @@ main { padding-bottom: 60px; }
   font-family: inherit; transition: box-shadow 0.2s;
 }
 .num-circle:focus { outline: none; box-shadow: 0 0 0 3px var(--accent-soft); }
+.at-update-status {
+  min-height: 20px; margin: -4px 0 12px;
+  color: var(--text-mute); font-size: 0.78rem;
+}
+.at-update-status.success { color: var(--success); }
+.at-update-status.error { color: var(--danger); }
+.btn:disabled { opacity: 0.55; cursor: wait; transform: none; }
 
 /* Output */
 .output-box {
@@ -385,6 +403,11 @@ main { padding-bottom: 60px; }
   max-width: 460px; width: 100%;
   animation: modalIn 0.25s ease;
   box-shadow: var(--shadow-lg);
+}
+.modal.modal-wide { max-width: 760px; max-height: calc(100vh - 40px); overflow-y: auto; }
+.cruz-config-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px; }
+@media (max-width: 640px) {
+  .cruz-config-grid { grid-template-columns: 1fr; }
 }
 @keyframes modalIn { from { opacity: 0; transform: scale(0.94) translateY(-8px); } to { opacity: 1; transform: scale(1) translateY(0); } }
 .modal-icon { font-size: 2.4rem; text-align: center; margin-bottom: 8px; }
@@ -508,6 +531,7 @@ main { padding-bottom: 60px; }
     <div class="sec-hdr">
       <h2>Tarjetas (8 en total)</h2>
       <div class="sec-hdr-btns">
+        <button class="btn" onclick="openCruzModal()">✚ Configurar La Cruz</button>
         <button class="btn" onclick="openCardStyleModal()">🎴 Estilo de tarjetas</button>
         <button class="btn btn-danger" onclick="confirmClearCards()">🗑 Limpiar todas</button>
       </div>
@@ -520,6 +544,7 @@ main { padding-bottom: 60px; }
     <div class="sec-hdr">
       <h2 id="atTitle">Sección inferior</h2>
       <div class="sec-hdr-btns" id="provBtns">
+        <button class="btn btn-primary" id="btnActualizarNumeros" onclick="actualizarNumerosDesdeWeb()">↻ Actualizar atrasados</button>
         <button class="btn btn-primary" onclick="addProv()">+ Provincia</button>
       </div>
     </div>
@@ -539,13 +564,15 @@ main { padding-bottom: 60px; }
       </span>
     </div>
 
+    <div class="at-update-status" id="atUpdateStatus" aria-live="polite"></div>
     <div id="atrasadosContainer"></div>
 
     <div id="cruzPanel" style="display:none">
       <p style="margin:0 0 10px;color:var(--text-soft);font-size:.92rem">
-        La Cruz se calcula automáticamente desde la fecha. En el prompt se inyecta el cuadro
-        completo con los 8 números ya resueltos.
+        La Cruz se calcula automáticamente desde la fecha. Solo se pueden personalizar sus aspectos
+        visuales; la estructura, posiciones y números permanecen protegidos.
       </p>
+      <button class="btn btn-primary" onclick="openCruzModal()">✚ Personalizar visuales</button>
       <div id="cruzPreview" style="font-size:.9rem;color:var(--text-mute)"></div>
     </div>
   </div>
@@ -609,6 +636,39 @@ main { padding-bottom: 60px; }
   </div>
 </div>
 
+<!-- MODAL CONFIGURACIÓN DE LA CRUZ -->
+<div class="modal-overlay" id="cruzModal">
+  <div class="modal modal-wide">
+    <div class="modal-icon">✚</div>
+    <h3>Visuales de La Cruz</h3>
+    <p>La composición y los números se mantienen fijos y se calculan automáticamente.</p>
+
+    <div class="cruz-config-grid">
+      <div class="form-group">
+        <label>Fondo y marco</label>
+        <input type="text" id="cruz_fondo" />
+      </div>
+      <div class="form-group">
+        <label>Círculos de las puntas</label>
+        <input type="text" id="cruz_puntas" />
+      </div>
+      <div class="form-group">
+        <label>Círculos centrales y líneas</label>
+        <input type="text" id="cruz_centro" />
+      </div>
+      <div class="form-group">
+        <label>Tipografía</label>
+        <input type="text" id="cruz_tipografia" />
+      </div>
+    </div>
+
+    <div class="modal-btns">
+      <button class="btn btn-ghost" onclick="resetCruzConfig()">↺ Restaurar</button>
+      <button class="btn btn-primary" onclick="saveCruzAndClose()">✅ Guardar</button>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL CONFIRMACIÓN -->
 <div class="modal-overlay" id="confirmModal">
   <div class="modal">
@@ -622,6 +682,18 @@ main { padding-bottom: 60px; }
   </div>
 </div>
 
+<!-- MODAL INFORMATIVO -->
+<div class="modal-overlay" id="infoModal">
+  <div class="modal">
+    <div class="modal-icon">ℹ️</div>
+    <h3 id="infoTitle">La Cruz ya está en uso</h3>
+    <p id="infoMsg"></p>
+    <div class="modal-btns">
+      <button class="btn btn-primary" onclick="closeModal('infoModal')">Entendido</button>
+    </div>
+  </div>
+</div>
+
 <script>
 /* ══════════════════════════════════════════
    DATOS INICIALES
@@ -630,14 +702,14 @@ const PROVINCIAS = ["JUJUY","SALTA","CORDOBA","PROVINCIA","CIUDAD"];
 const MESES = ["ENERO","FEBRERO","MARZO","ABRIL","MAYO","JUNIO","JULIO","AGOSTO","SEPTIEMBRE","OCTUBRE","NOVIEMBRE","DICIEMBRE"];
 
 const DEFAULT_CARDS = [
-  {titulo:"DÍA DEL ESCRITOR",          ilus:"pluma antigua y libros apilados",                   num1:"17", num2:""},
-  {titulo:"DÍA DE LOS MEDIOS",          ilus:"micrófono de radio, televisor y cámara de noticias",num1:"52", num2:""},
-  {titulo:"DÍA DEL NIETO",              ilus:"abuela con gafas abrazando a su nieto",              num1:"03", num2:""},
-  {titulo:"DÍA DEL RECUPERADOR URBANO", ilus:"cartonero con carrito y contenedor de reciclaje",   num1:"07", num2:""},
-  {titulo:"PLATITA",   ilus:"monedas doradas apiladas y billetes de dólares",        num1:"32", num2:""},
-  {titulo:"ACCIDENTE", ilus:"auto rojo chocado con señal de advertencia triangular", num1:"24", num2:""},
-  {titulo:"EL LOCO",   ilus:"personaje caricaturesco desquiciado con pelo revuelto", num1:"22", num2:""},
-  {titulo:"LADRÓN",    ilus:"ladrón con antifaz negro y bolsa con símbolo de dinero",num1:"79", num2:""},
+  {tipo:"normal", titulo:"DÍA DEL ESCRITOR",          ilus:"pluma antigua y libros apilados",                    num1:"17", num2:""},
+  {tipo:"normal", titulo:"DÍA DE LOS MEDIOS",          ilus:"micrófono de radio, televisor y cámara de noticias", num1:"52", num2:""},
+  {tipo:"normal", titulo:"DÍA DEL NIETO",              ilus:"abuela con gafas abrazando a su nieto",              num1:"03", num2:""},
+  {tipo:"normal", titulo:"DÍA DEL RECUPERADOR URBANO", ilus:"cartonero con carrito y contenedor de reciclaje",    num1:"07", num2:""},
+  {tipo:"normal", titulo:"PLATITA",   ilus:"monedas doradas apiladas y billetes de dólares",         num1:"32", num2:""},
+  {tipo:"normal", titulo:"ACCIDENTE", ilus:"auto rojo chocado con señal de advertencia triangular",  num1:"24", num2:""},
+  {tipo:"normal", titulo:"EL LOCO",   ilus:"personaje caricaturesco desquiciado con pelo revuelto",  num1:"22", num2:""},
+  {tipo:"normal", titulo:"LADRÓN",    ilus:"ladrón con antifaz negro y bolsa con símbolo de dinero", num1:"79", num2:""},
 ];
 
 const DEFAULT_AT = [
@@ -647,6 +719,24 @@ const DEFAULT_AT = [
   ["","","","",""],
   ["","","","",""],
 ];
+
+const LOCAL_NUMEROS_FALLBACK = {
+  actualizado: "2026-06-13T05:33:08.195Z",
+  atrasados: {
+    jujuy: { nombre: "JUJUY", numeros: ["93","61","90","38","73"] },
+    salta: { nombre: "SALTA", numeros: ["62","00","18","45","28"] },
+    cordoba: { nombre: "CORDOBA", numeros: ["11","64","15","61","94"] },
+    provincia: { nombre: "PROVINCIA", numeros: ["33","79","80","70","04"] },
+    ciudad: { nombre: "CIUDAD", numeros: ["51","24","97","33","17"] },
+  },
+  salidores: {
+    jujuy: { nombre: "JUJUY", numeros: ["89","21","32","74","81"] },
+    salta: { nombre: "SALTA", numeros: ["66","39","01","70","47"] },
+    cordoba: { nombre: "CORDOBA", numeros: ["48","94","45","04","02"] },
+    provincia: { nombre: "PROVINCIA", numeros: ["68","06","20","54","93"] },
+    ciudad: { nombre: "CIUDAD", numeros: ["10","11","41","19","50"] },
+  }
+};
 
 const DEFAULT_VISUAL = {
   fondo: "rojo caricaturesco, ornamentado.",
@@ -663,14 +753,63 @@ const DEFAULT_CARD_STYLE = {
 
 const FORMATOS = {
   celular: { line: "Formato vertical con proporción 4:5 (NO más alargado), optimizado para visualizarse en celular y compartir por WhatsApp sin que el encabezado ni el pie queden tapados por la interfaz del chat" },
-  pc:      { line: "Formato horizontal con proporción 4:3, optimizado para visualizarse en computadora" }
+  pc:      { line: "Formato horizontal con proporción 4:3 exacto. Si existe conflicto entre decoracion y estructura, respetar estructura. Si falta espacio, reducir las ilustraciones" }
 };
 
+const DEFAULT_CRUZ = {
+  fondo: "Fondo crema con borde marrón ornamentado",
+  puntas: "4 círculos grandes rojos rellenos, con números blancos grandes",
+  centro: "4 círculos blancos con borde rojo y números rojos; líneas diagonales finas marrones",
+  tipografia: "Tipografía serif elegante, colores vino/borgoña"
+};
+
+let cruzConfig = { ...DEFAULT_CRUZ };
+
 /* Estado dinámico de la sección inferior */
+function defaultProvinceState() {
+  return PROVINCIAS.map((name, i) => ({ name, nums: [...DEFAULT_AT[i]] }));
+}
+
+function cloneProvinceState(provs) {
+  return provs.map(prov => ({
+    name: prov.name || "",
+    nums: Array.isArray(prov.nums) ? [...prov.nums] : [],
+  }));
+}
+
 let atState = {
   modo: "atrasados", // "atrasados" | "salidores" | "cruz"
-  provs: PROVINCIAS.map((name, i) => ({ name, nums: [...DEFAULT_AT[i]] }))
+  atrasados: defaultProvinceState(),
+  salidores: defaultProvinceState(),
 };
+
+function activeProvinceState() {
+  return atState[atState.modo] || [];
+}
+
+function normalizeAtState(savedState) {
+  const validModes = ["atrasados", "salidores", "cruz"];
+  const mode = validModes.includes(savedState?.modo) ? savedState.modo : "atrasados";
+
+  if (Array.isArray(savedState?.atrasados) && Array.isArray(savedState?.salidores)) {
+    return {
+      modo: mode,
+      atrasados: cloneProvinceState(savedState.atrasados),
+      salidores: cloneProvinceState(savedState.salidores),
+    };
+  }
+
+  const migrated = {
+    modo: mode,
+    atrasados: defaultProvinceState(),
+    salidores: defaultProvinceState(),
+  };
+  if (Array.isArray(savedState?.provs)) {
+    const previousMode = mode === "salidores" ? "salidores" : "atrasados";
+    migrated[previousMode] = cloneProvinceState(savedState.provs);
+  }
+  return migrated;
+}
 
 /* ══════════════════════════════════════════
    THEME TOGGLE
@@ -695,6 +834,7 @@ function saveAll() {
   d.cards = [];
   for (let i = 1; i <= 8; i++) {
     d.cards.push({
+      tipo:   g(`tipo_${i}`) || "normal",
       titulo: g(`titulo_${i}`),
       ilus:   g(`ilus_${i}`),
       num1:   g(`num1_${i}`),
@@ -706,6 +846,8 @@ function saveAll() {
   d.atState = atState;
   d.vis = { fondo: g("vis_fondo"), estilo: g("vis_estilo"), notas: g("vis_notas") };
   d.cs  = { marco: g("cs_marco"), titulo: g("cs_titulo"), ilus: g("cs_ilus"), numero: g("cs_numero") };
+  syncCruzConfigFromDOM();
+  d.cruzConfig = cruzConfig;
   localStorage.setItem("b217", JSON.stringify(d));
 }
 
@@ -756,6 +898,20 @@ function buildCards(data) {
   (data || DEFAULT_CARDS).forEach((card, i) => {
     const n = i + 1;
     const hasNum2 = card.num2 && card.num2 !== "";
+    const tipo = n === 8 && card.tipo === "cruz" ? "cruz" : "normal";
+    const typeSelector = n === 8 ? `
+      <label>Contenido</label>
+      <select class="card-type-select" id="tipo_${n}" onchange="toggleCardType(${n}, true);saveAll()">
+        <option value="normal" ${tipo === "normal" ? "selected" : ""}>Tarjeta normal</option>
+        <option value="cruz" ${tipo === "cruz" ? "selected" : ""}>La Cruz del Día</option>
+      </select>
+    ` : "";
+    const cruzPanel = n === 8 ? `
+      <div class="card-cruz-panel" id="cruzFields_${n}">
+        <p>Esta posición se reemplazará por La Cruz del Día, calculada automáticamente según la fecha.</p>
+        <button class="btn btn-primary" onclick="openCruzModal()">✚ Personalizar visuales</button>
+      </div>
+    ` : "";
     const div = document.createElement("div");
     div.className = "card-item";
     div.id = `card_${n}`;
@@ -764,19 +920,23 @@ function buildCards(data) {
         <span class="card-badge">${n}</span>
         <span class="card-name">Tarjeta ${n}</span>
       </div>
-      <label>Título</label>
-      <input type="text" id="titulo_${n}" value="${esc(card.titulo)}" placeholder="Ej: DÍA DEL ESCRITOR">
-      <label>Ilustración <span style="font-weight:400;color:var(--text-mute);text-transform:none;letter-spacing:0">(opcional)</span></label>
-      <textarea id="ilus_${n}" placeholder="Describí la imagen (puede quedar vacío)">${esc(card.ilus)}</textarea>
-      <label>Número(s)</label>
-      <div class="num-row" id="numrow_${n}">
-        <input class="num-input" type="text" id="num1_${n}" maxlength="2" value="${esc(card.num1)}" placeholder="00">
-        <div id="num2wrap_${n}" style="display:${hasNum2?'flex':'none'};align-items:center;gap:6px">
-          <input class="num-input" type="text" id="num2_${n}" maxlength="2" value="${esc(card.num2||'')}" placeholder="00">
-          <button class="btn-rmnum" onclick="removeNum(${n})" title="Quitar 2° número">✕</button>
+      ${typeSelector}
+      <div id="normalFields_${n}">
+        <label>Título</label>
+        <input type="text" id="titulo_${n}" value="${esc(card.titulo)}" placeholder="Ej: DÍA DEL ESCRITOR">
+        <label>Ilustración <span style="font-weight:400;color:var(--text-mute);text-transform:none;letter-spacing:0">(opcional)</span></label>
+        <textarea id="ilus_${n}" placeholder="Describí la imagen (puede quedar vacío)">${esc(card.ilus)}</textarea>
+        <label>Número(s)</label>
+        <div class="num-row" id="numrow_${n}">
+          <input class="num-input" type="text" id="num1_${n}" maxlength="2" value="${esc(card.num1)}" placeholder="00">
+          <div id="num2wrap_${n}" style="display:${hasNum2?'flex':'none'};align-items:center;gap:6px">
+            <input class="num-input" type="text" id="num2_${n}" maxlength="2" value="${esc(card.num2||'')}" placeholder="00">
+            <button class="btn-rmnum" onclick="removeNum(${n})" title="Quitar 2° número">✕</button>
+          </div>
+          <button class="btn-addnum" id="addnum_${n}" onclick="addNum(${n})" title="Agregar 2° número" ${hasNum2?'disabled':''}>＋</button>
         </div>
-        <button class="btn-addnum" id="addnum_${n}" onclick="addNum(${n})" title="Agregar 2° número" ${hasNum2?'disabled':''}>＋</button>
       </div>
+      ${cruzPanel}
     `;
     grid.appendChild(div);
 
@@ -785,14 +945,33 @@ function buildCards(data) {
     });
     const n1 = document.getElementById(`num1_${n}`);
     n1.addEventListener("input", e => { onlyNums(e); saveAll(); });
+    const n2 = document.getElementById(`num2_${n}`);
+    n2.addEventListener("input", e => { onlyNums(e); saveAll(); });
+    if (n === 8) toggleCardType(n, false);
   });
+}
+
+function card8HasCruz() {
+  return g("tipo_8") === "cruz";
+}
+
+function toggleCardType(n, userInitiated = false) {
+  if (n !== 8) return;
+  const isCruz = g(`tipo_${n}`) === "cruz";
+  document.getElementById(`normalFields_${n}`).style.display = isCruz ? "none" : "block";
+  document.getElementById(`cruzFields_${n}`).style.display = isCruz ? "block" : "none";
+  if (isCruz && userInitiated) {
+    syncAtStateFromDOM();
+    atState.modo = "atrasados";
+    document.getElementById("modo_atrasados").checked = true;
+    renderAtrasados();
+  }
 }
 
 function addNum(n) {
   document.getElementById(`num2wrap_${n}`).style.display = "flex";
   document.getElementById(`addnum_${n}`).disabled = true;
   const inp = document.getElementById(`num2_${n}`);
-  inp.addEventListener("input", e => { onlyNums(e); saveAll(); });
   inp.focus();
   saveAll();
 }
@@ -809,7 +988,7 @@ function removeNum(n) {
 ══════════════════════════════════════════ */
 function syncAtStateFromDOM() {
   if (atState.modo === "cruz") return;
-  atState.provs.forEach((p, gi) => {
+  activeProvinceState().forEach((p, gi) => {
     const nameEl = document.getElementById(`atname_${gi}`);
     if (nameEl) p.name = (nameEl.value || "").trim().toUpperCase();
     p.nums = p.nums.map((_, ni) => {
@@ -823,6 +1002,8 @@ function renderAtrasados() {
   const cont = document.getElementById("atrasadosContainer");
   const cruzPanel = document.getElementById("cruzPanel");
   const provBtns = document.getElementById("provBtns");
+  const updateButton = document.getElementById("btnActualizarNumeros");
+  const updateStatus = document.getElementById("atUpdateStatus");
   cont.innerHTML = "";
 
   const titles = { atrasados: "Números atrasados", salidores: "Números salidores", cruz: "La cruz del día" };
@@ -832,14 +1013,20 @@ function renderAtrasados() {
     cont.style.display = "none";
     cruzPanel.style.display = "block";
     provBtns.style.display = "none";
+    updateStatus.style.display = "none";
     renderCruzPreview();
     return;
   }
   cont.style.display = "";
   cruzPanel.style.display = "none";
   provBtns.style.display = "";
+  updateButton.style.display = "";
+  updateButton.textContent = atState.modo === "atrasados"
+    ? "↻ Actualizar atrasados"
+    : "↻ Actualizar salidores";
+  updateStatus.style.display = "";
 
-  atState.provs.forEach((prov, gi) => {
+  activeProvinceState().forEach((prov, gi) => {
     const div = document.createElement("div");
     div.className = "at-group";
     const inputs = prov.nums.map((n, ni) =>
@@ -873,10 +1060,112 @@ function renderAtrasados() {
   });
 }
 
+function normalizeProvinceName(name) {
+  return (name || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .trim()
+    .toUpperCase();
+}
+
+function validateNumbersData(data, mode) {
+  const keys = ["jujuy", "salta", "cordoba", "provincia", "ciudad"];
+  if (!data || typeof data !== "object" || !data[mode]) {
+    throw new Error("El archivo de datos no tiene el formato esperado.");
+  }
+  keys.forEach(key => {
+    const item = data[mode][key];
+    if (!item || !Array.isArray(item.numeros) || item.numeros.length !== 5) {
+      throw new Error(`Faltan los cinco números de ${key.toUpperCase()}.`);
+    }
+    if (item.numeros.some(number => !/^\d{2}$/.test(String(number)))) {
+      throw new Error(`Hay un número inválido en ${key.toUpperCase()}.`);
+    }
+  });
+  return keys;
+}
+
+async function actualizarNumerosDesdeWeb() {
+  if (!["atrasados", "salidores"].includes(atState.modo)) return;
+
+  const mode = atState.modo;
+  const modeLabel = mode === "atrasados" ? "Atrasados" : "Salidores";
+  const button = document.getElementById("btnActualizarNumeros");
+  const status = document.getElementById("atUpdateStatus");
+  const originalText = button.textContent;
+  button.disabled = true;
+  button.textContent = "↻ Buscando...";
+  status.className = "at-update-status";
+  status.textContent = "Cargando el último archivo generado por GitHub Actions...";
+
+  try {
+    const isLocalFile = window.location.protocol === "file:";
+    let data;
+    if (isLocalFile) {
+      data = LOCAL_NUMEROS_FALLBACK;
+    } else {
+      const dataUrl = new URL("datos.json", window.location.href);
+      dataUrl.searchParams.set("v", Date.now());
+      const response = await fetch(dataUrl, { cache: "no-store" });
+      if (!response.ok) throw new Error(`No se pudo cargar datos.json (HTTP ${response.status}).`);
+      data = await response.json();
+    }
+
+    const keys = validateNumbersData(data, mode);
+    syncAtStateFromDOM();
+
+    const canonicalNames = new Set(
+      keys.map(key => normalizeProvinceName(data[mode][key].nombre)),
+    );
+    const updatedProvinces = keys.map(key => ({
+      name: data[mode][key].nombre,
+      nums: data[mode][key].numeros.map(number => String(number).padStart(2, "0")),
+    }));
+    const extraProvinces = atState[mode].filter(
+      province => !canonicalNames.has(normalizeProvinceName(province.name)),
+    );
+
+    atState[mode] = [...updatedProvinces, ...extraProvinces];
+    renderAtrasados();
+    saveAll();
+
+    const updatedAt = data.actualizado
+      ? new Date(data.actualizado).toLocaleString("es-AR", {
+          dateStyle: "short",
+          timeStyle: "short",
+        })
+      : "sin fecha";
+    const refreshedStatus = document.getElementById("atUpdateStatus");
+    refreshedStatus.className = "at-update-status success";
+    refreshedStatus.textContent = isLocalFile
+      ? `${modeLabel} cargados desde la copia local de prueba (${updatedAt}).`
+      : `${modeLabel} actualizados. Datos generados: ${updatedAt}.`;
+  } catch (error) {
+    status.className = "at-update-status error";
+    status.textContent = error.message || `No se pudieron actualizar los ${mode}.`;
+  } finally {
+    button.disabled = false;
+    button.textContent = originalText;
+  }
+}
+
 document.querySelectorAll('input[name="modo"]').forEach(r => {
   r.addEventListener("change", () => {
     syncAtStateFromDOM();
-    atState.modo = (document.querySelector('input[name="modo"]:checked') || {}).value || "atrasados";
+    const nextMode = (document.querySelector('input[name="modo"]:checked') || {}).value || "atrasados";
+    if (nextMode === "cruz" && card8HasCruz()) {
+      const currentRadio = document.getElementById(`modo_${atState.modo}`);
+      if (currentRadio) currentRadio.checked = true;
+      showInfo(
+        "La Cruz ya está en la tarjeta 8",
+        "No se puede agregar una segunda Cruz en la sección inferior. Podés usar Atrasados o Salidores."
+      );
+      return;
+    }
+    atState.modo = nextMode;
+    const updateStatus = document.getElementById("atUpdateStatus");
+    updateStatus.className = "at-update-status";
+    updateStatus.textContent = "";
     renderAtrasados();
     saveAll();
   });
@@ -884,24 +1173,26 @@ document.querySelectorAll('input[name="modo"]').forEach(r => {
 
 function addProv() {
   syncAtStateFromDOM();
-  atState.provs.push({ name: "NUEVA PROVINCIA", nums: ["","","",""," "] });
+  const provs = activeProvinceState();
+  provs.push({ name: "NUEVA PROVINCIA", nums: ["","","",""," "] });
   // arreglar último (espacio)
-  atState.provs[atState.provs.length - 1].nums = ["","","","",""];
+  provs[provs.length - 1].nums = ["","","","",""];
   renderAtrasados();
   // focus en el nombre nuevo
-  const idx = atState.provs.length - 1;
+  const idx = provs.length - 1;
   const el = document.getElementById(`atname_${idx}`);
   if (el) { el.focus(); el.select(); }
   saveAll();
 }
 
 function removeProv(gi) {
+  const provs = activeProvinceState();
   showConfirm(
-    `¿Eliminar ${atState.provs[gi].name || 'esta provincia'}?`,
+    `¿Eliminar ${provs[gi].name || 'esta provincia'}?`,
     "Se quitará por completo del boletín.",
     () => {
       syncAtStateFromDOM();
-      atState.provs.splice(gi, 1);
+      activeProvinceState().splice(gi, 1);
       renderAtrasados();
       saveAll();
     }
@@ -910,14 +1201,14 @@ function removeProv(gi) {
 
 function addNumProv(gi) {
   syncAtStateFromDOM();
-  atState.provs[gi].nums.push("");
+  activeProvinceState()[gi].nums.push("");
   renderAtrasados();
   saveAll();
 }
 
 function removeNumProv(gi, ni) {
   syncAtStateFromDOM();
-  atState.provs[gi].nums.splice(ni, 1);
+  activeProvinceState()[gi].nums.splice(ni, 1);
   renderAtrasados();
   saveAll();
 }
@@ -973,11 +1264,99 @@ function pickerToDate(val) {
   const [y,m,d] = val.split("-").map(Number);
   return new Date(y, m-1, d);
 }
+
+function computedCruzNumbers() {
+  return computeCruz(pickerToDate(g("fechaInput")) || new Date());
+}
+
+function normalizeCruzConfig(data) {
+  const source = data || {};
+  return {
+    fondo: source.fondo || DEFAULT_CRUZ.fondo,
+    puntas: source.puntas || DEFAULT_CRUZ.puntas,
+    centro: source.centro || DEFAULT_CRUZ.centro,
+    tipografia: source.tipografia || source.estilo || DEFAULT_CRUZ.tipografia
+  };
+}
+
+function renderCruzForm() {
+  document.getElementById("cruz_fondo").value = cruzConfig.fondo;
+  document.getElementById("cruz_puntas").value = cruzConfig.puntas;
+  document.getElementById("cruz_centro").value = cruzConfig.centro;
+  document.getElementById("cruz_tipografia").value = cruzConfig.tipografia;
+}
+
+function syncCruzConfigFromDOM() {
+  if (!document.getElementById("cruz_fondo")) return;
+  cruzConfig.fondo = g("cruz_fondo") || DEFAULT_CRUZ.fondo;
+  cruzConfig.puntas = g("cruz_puntas") || DEFAULT_CRUZ.puntas;
+  cruzConfig.centro = g("cruz_centro") || DEFAULT_CRUZ.centro;
+  cruzConfig.tipografia = g("cruz_tipografia") || DEFAULT_CRUZ.tipografia;
+}
+
+function openCruzModal() {
+  renderCruzForm();
+  document.getElementById("cruzModal").classList.add("active");
+}
+
+function resetCruzConfig() {
+  cruzConfig = normalizeCruzConfig(DEFAULT_CRUZ);
+  renderCruzForm();
+  renderCruzPreview();
+}
+
+function saveCruzAndClose() {
+  syncCruzConfigFromDOM();
+  renderCruzPreview();
+  saveAll();
+  closeModal("cruzModal");
+}
+
+function buildCruzPromptBody() {
+  syncCruzConfigFromDOM();
+  const c = computedCruzNumbers();
+  const customFondo = cruzConfig.fondo !== DEFAULT_CRUZ.fondo;
+  const customPuntas = cruzConfig.puntas !== DEFAULT_CRUZ.puntas;
+  const customCentro = cruzConfig.centro !== DEFAULT_CRUZ.centro;
+  const customTipografia = cruzConfig.tipografia !== DEFAULT_CRUZ.tipografia;
+  const cleanVisual = value => value.replace(/[.\s]+$/, "");
+  const fondoVisual = cleanVisual(cruzConfig.fondo);
+
+  const fondoLine = customFondo
+    ? `Cuadro con ${fondoVisual.charAt(0).toLowerCase()}${fondoVisual.slice(1)}, mostrando la cruz numerológica del día. Composición:`
+    : "Cuadro sobre fondo crema con borde marrón ornamentado, mostrando la cruz numerológica del día. Composición:";
+  const puntasLine = customPuntas
+    ? `- Una X formada por 4 círculos grandes en las puntas (arriba-izq, arriba-der, abajo-der, abajo-izq), unidos por dos líneas diagonales finas. Apariencia visual: ${cleanVisual(cruzConfig.puntas)}.`
+    : "- Una X formada por 4 círculos grandes rojos rellenos en las puntas (arriba-izq, arriba-der, abajo-der, abajo-izq), unidos por dos líneas diagonales finas marrones.";
+  const centroLine = customCentro
+    ? `- Sobre esas diagonales, 4 círculos en posición de cruz central: uno arriba, uno a la derecha, uno abajo, uno a la izquierda. Apariencia visual de los círculos centrales y las líneas: ${cleanVisual(cruzConfig.centro)}.`
+    : "- Sobre esas diagonales, 4 círculos blancos con borde rojo en posición de cruz central: uno arriba, uno a la derecha, uno abajo, uno a la izquierda.";
+  const outerDescriptor = customPuntas ? "círculo de la punta, número grande" : "círculo rojo, número blanco grande";
+  const innerDescriptor = customCentro ? "círculo central, número destacado" : "círculo blanco, número rojo";
+  const typographyLine = customTipografia
+    ? cleanVisual(cruzConfig.tipografia) + "."
+    : "Tipografía serif elegante, colores vino/borgoña.";
+
+  return `${fondoLine}
+${puntasLine}
+${centroLine}
+- Encabezado del cuadro: "LA CRUZ DEL DÍA".
+Números exactos (NO calcular, usar tal cual):
+- Punta arriba-izq (${outerDescriptor}): ${c.outerTL}
+- Punta arriba-der (${outerDescriptor}): ${c.outerTR}
+- Punta abajo-der (${outerDescriptor}): ${c.outerBR}
+- Punta abajo-izq (${outerDescriptor}): ${c.outerBL}
+- Centro-arriba (${innerDescriptor}, etiqueta "DÍA"): ${c.top}
+- Centro-derecha (${innerDescriptor}, etiqueta "MES"): ${c.right}
+- Centro-abajo (${innerDescriptor}, etiqueta "AÑO"): ${c.bottom}
+- Centro-izquierda (${innerDescriptor}, etiqueta "SUMA"): ${c.left}
+${typographyLine}`;
+}
+
 function renderCruzPreview() {
   const el = document.getElementById("cruzPreview");
   if (!el) return;
-  const d = pickerToDate(g("fechaInput")) || new Date();
-  const c = computeCruz(d);
+  const c = computedCruzNumbers();
 
   // Coordenadas de la cruz (viewBox 280x280)
   const cx = 140, cy = 140;
@@ -1032,7 +1411,10 @@ function renderCruzPreview() {
     </div>
   `;
 }
-fechaInput.addEventListener("change", () => { if (atState.modo === "cruz") renderCruzPreview(); });
+fechaInput.addEventListener("change", () => {
+  if (atState.modo === "cruz") renderCruzPreview();
+  saveAll();
+});
 
 /* ══════════════════════════════════════════
    INIT
@@ -1048,17 +1430,20 @@ fechaInput.addEventListener("change", () => { if (atState.modo === "cruz") rende
       const r = document.getElementById(`fmt_${saved.formato}`);
       if (r) r.checked = true;
     }
+    cruzConfig = normalizeCruzConfig(saved.cruzConfig);
+    renderCruzForm();
+    atState = normalizeAtState(saved.atState);
+    const savedCard8HasCruz = saved.cards?.[7]?.tipo === "cruz";
+    if (savedCard8HasCruz && atState.modo === "cruz") atState.modo = "atrasados";
     buildCards(saved.cards);
-    if (saved.atState && Array.isArray(saved.atState.provs)) {
-      atState = saved.atState;
-      if (!["atrasados","salidores","cruz"].includes(atState.modo)) atState.modo = "atrasados";
-    }
     const modoRadio = document.getElementById(`modo_${atState.modo}`);
     if (modoRadio) modoRadio.checked = true;
     renderAtrasados();
     loadVisual(saved.vis);
     loadCardStyle(saved.cs);
   } else {
+    cruzConfig = normalizeCruzConfig(null);
+    renderCruzForm();
     buildCards(null);
     renderAtrasados();
     loadVisual(null);
@@ -1074,19 +1459,20 @@ function confirmClearCards() {
     "¿Limpiar todas las tarjetas?",
     "Se borrarán los títulos, ilustraciones y números de las 8 tarjetas.",
     () => {
-      buildCards(DEFAULT_CARDS.map(() => ({titulo:"", ilus:"", num1:"", num2:""})));
+      buildCards(DEFAULT_CARDS.map(() => ({tipo:"normal", titulo:"", ilus:"", num1:"", num2:""})));
       saveAll();
     }
   );
 }
 function confirmClearProvincia(gi) {
-  const prov = atState.provs[gi];
+  const prov = activeProvinceState()[gi];
   showConfirm(
     `¿Limpiar ${atState.modo} de ${prov?.name || ''}?`,
     "Se borrarán todos los números de esta provincia.",
     () => {
       syncAtStateFromDOM();
-      atState.provs[gi].nums = atState.provs[gi].nums.map(() => "");
+      const currentProv = activeProvinceState()[gi];
+      currentProv.nums = currentProv.nums.map(() => "");
       renderAtrasados();
       saveAll();
     }
@@ -1103,6 +1489,11 @@ function showConfirm(title, msg, cb) {
   document.getElementById("confirmMsg").textContent = msg;
   _confirmCallback = cb;
   document.getElementById("confirmModal").classList.add("active");
+}
+function showInfo(title, msg) {
+  document.getElementById("infoTitle").textContent = title;
+  document.getElementById("infoMsg").textContent = msg;
+  document.getElementById("infoModal").classList.add("active");
 }
 document.getElementById("btnConfirmOk").addEventListener("click", () => {
   closeModal("confirmModal");
@@ -1125,12 +1516,13 @@ function validateAndGenerate() {
   syncAtStateFromDOM();
   const warnings = [];
   for (let i = 1; i <= 8; i++) {
+    if (g(`tipo_${i}`) === "cruz") continue;
     if (!g(`titulo_${i}`)) warnings.push(`Tarjeta ${i}: falta el título`);
     if (!g(`num1_${i}`))   warnings.push(`Tarjeta ${i}: falta el número`);
   }
   if (atState.modo !== "cruz") {
     const palabra = atState.modo === "atrasados" ? "Atrasados" : "Salidores";
-    atState.provs.forEach(p => {
+    activeProvinceState().forEach(p => {
       if (!p.name) warnings.push(`${palabra}: hay una provincia sin nombre`);
       if (p.nums.some(n => !n || !n.trim())) warnings.push(`${palabra} ${p.name || '(sin nombre)'}: hay números vacíos`);
     });
@@ -1152,39 +1544,28 @@ function generarPrompt() {
 
   let fila1 = "", fila2 = "";
   for (let i = 1; i <= 8; i++) {
-    const titulo = g(`titulo_${i}`) || `[TÍTULO_${i}]`;
-    const ilus   = g(`ilus_${i}`)   || `[ILUSTRACIÓN_${i}]`;
-    const num1   = g(`num1_${i}`)   || "??";
-    const num2   = g(`num2_${i}`);
-    const numStr = num2 ? `Números: ${num1} / ${num2}` : `Número: ${num1}`;
-    const line   = `${i}. ${titulo} - ${ilus} - ${numStr}\n`;
+    let line;
+    if (g(`tipo_${i}`) === "cruz") {
+      line = `${i}. [SECCIÓN "LA CRUZ DEL DÍA" (parte inferior):\n${buildCruzPromptBody()}\n]\n`;
+    } else {
+      const titulo = g(`titulo_${i}`) || `[TÍTULO_${i}]`;
+      const ilus   = g(`ilus_${i}`)   || `[ILUSTRACIÓN_${i}]`;
+      const num1   = g(`num1_${i}`)   || "??";
+      const num2   = g(`num2_${i}`);
+      const numStr = num2 ? `Números: ${num1} / ${num2}` : `Número: ${num1}`;
+      line = `${i}. ${titulo} - ${ilus} - ${numStr}\n`;
+    }
     if (i <= 4) fila1 += line; else fila2 += line;
   }
 
   let seccionInferior = "", seccionTitulo = "";
   if (atState.modo === "cruz") {
-    const d = pickerToDate(g("fechaInput")) || new Date();
-    const c = computeCruz(d);
     seccionTitulo = `SECCIÓN "LA CRUZ DEL DÍA" (parte inferior)`;
-    seccionInferior =
-`Cuadro sobre fondo crema con borde marrón ornamentado, mostrando la cruz numerológica del día. Composición:
-- Una X formada por 4 círculos grandes rojos rellenos en las puntas (arriba-izq, arriba-der, abajo-der, abajo-izq), unidos por dos líneas diagonales finas marrones.
-- Sobre esas diagonales, 4 círculos blancos con borde rojo en posición de cruz central: uno arriba, uno a la derecha, uno abajo, uno a la izquierda.
-- Encabezado del cuadro: "LA CRUZ DEL DÍA".
-Números exactos (NO calcular, usar tal cual):
-- Punta arriba-izq (círculo rojo, número blanco grande): ${c.outerTL}
-- Punta arriba-der (círculo rojo, número blanco grande): ${c.outerTR}
-- Punta abajo-der (círculo rojo, número blanco grande): ${c.outerBR}
-- Punta abajo-izq (círculo rojo, número blanco grande): ${c.outerBL}
-- Centro-arriba (círculo blanco, número rojo, etiqueta "DÍA"): ${c.top}
-- Centro-derecha (círculo blanco, número rojo, etiqueta "MES"): ${c.right}
-- Centro-abajo (círculo blanco, número rojo, etiqueta "AÑO"): ${c.bottom}
-- Centro-izquierda (círculo blanco, número rojo, etiqueta "SUMA"): ${c.left}
-Tipografía serif elegante, colores vino/borgoña.`;
+    seccionInferior = buildCruzPromptBody();
   } else {
     const palabra = atState.modo === "atrasados" ? "ATRASADOS" : "SALIDORES";
     seccionTitulo = `SECCIÓN ${palabra} (parte inferior)`;
-    seccionInferior = atState.provs.map(p => {
+    seccionInferior = activeProvinceState().map(p => {
       const nums = p.nums.map(n => (n && n.trim()) ? n.trim() : "??").join(" ");
       return `- "${palabra} ${p.name || '(SIN NOMBRE)'}" con ${p.nums.length} números en círculos azules: ${nums}`;
     }).join("\n");

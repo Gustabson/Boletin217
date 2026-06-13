@@ -1,0 +1,42 @@
+name: Actualizar atrasados y salidores
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "23 */2 * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: actualizar-numeros
+  cancel-in-progress: false
+
+jobs:
+  actualizar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Consultar fuentes
+        run: node scripts/actualizar-atrasados.mjs
+
+      - name: Guardar cambios
+        run: |
+          if git diff --quiet -- datos.json; then
+            echo "Los números no cambiaron."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add datos.json
+          git commit -m "Actualizar atrasados y salidores"
+          git push

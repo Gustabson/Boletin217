@@ -1,0 +1,118 @@
+{
+  "actualizado": "2026-06-13T05:33:08.195Z",
+  "criterio": "CABEZA > primeros 5 números",
+  "atrasados": {
+    "jujuy": {
+      "nombre": "JUJUY",
+      "fuente": "https://www.tujugada.com.ar/tombola-jujuy-estadisticas.asp",
+      "numeros": [
+        "93",
+        "61",
+        "90",
+        "38",
+        "73"
+      ]
+    },
+    "salta": {
+      "nombre": "SALTA",
+      "fuente": "https://www.tujugada.com.ar/quiniela-salta-estadisticas.asp",
+      "numeros": [
+        "62",
+        "00",
+        "18",
+        "45",
+        "28"
+      ]
+    },
+    "cordoba": {
+      "nombre": "CORDOBA",
+      "fuente": "https://www.tujugada.com.ar/quiniela-cordoba-estadisticas.asp",
+      "numeros": [
+        "11",
+        "64",
+        "15",
+        "61",
+        "94"
+      ]
+    },
+    "ciudad": {
+      "nombre": "CIUDAD",
+      "fuente": "https://www.tujugada.com.ar/quiniela-nacional-estadisticas.asp",
+      "numeros": [
+        "51",
+        "24",
+        "97",
+        "33",
+        "17"
+      ]
+    },
+    "provincia": {
+      "nombre": "PROVINCIA",
+      "fuente": "https://www.tujugada.com.ar/quiniela-provincia-buenos-aires-estadisticas.asp",
+      "numeros": [
+        "33",
+        "79",
+        "80",
+        "70",
+        "04"
+      ]
+    }
+  },
+  "salidores": {
+    "jujuy": {
+      "nombre": "JUJUY",
+      "fuente": "https://www.tujugada.com.ar/tombola-jujuy-estadisticas.asp",
+      "numeros": [
+        "89",
+        "21",
+        "32",
+        "74",
+        "81"
+      ]
+    },
+    "salta": {
+      "nombre": "SALTA",
+      "fuente": "https://www.tujugada.com.ar/quiniela-salta-estadisticas.asp",
+      "numeros": [
+        "66",
+        "39",
+        "01",
+        "70",
+        "47"
+      ]
+    },
+    "cordoba": {
+      "nombre": "CORDOBA",
+      "fuente": "https://www.tujugada.com.ar/quiniela-cordoba-estadisticas.asp",
+      "numeros": [
+        "48",
+        "94",
+        "45",
+        "04",
+        "02"
+      ]
+    },
+    "ciudad": {
+      "nombre": "CIUDAD",
+      "fuente": "https://www.tujugada.com.ar/quiniela-nacional-estadisticas.asp",
+      "numeros": [
+        "10",
+        "11",
+        "41",
+        "19",
+        "50"
+      ]
+    },
+    "provincia": {
+      "nombre": "PROVINCIA",
+      "fuente": "https://www.tujugada.com.ar/quiniela-provincia-buenos-aires-estadisticas.asp",
+      "numeros": [
+        "68",
+        "06",
+        "20",
+        "54",
+        "93"
+      ]
+    }
+  }
+}
