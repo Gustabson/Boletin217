@@ -32,9 +32,11 @@ const SOURCES = [
   },
 ];
 
-const USER_AGENT =
+const SOURCE_USER_AGENT =
   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 " +
   "(KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36";
+const READER_USER_AGENT =
+  "Boletin217Bot/1.0 (+https://github.com/Gustabson/Boletin217)";
 const READER_PREFIX = "https://r.jina.ai/";
 const FORCE_READER = process.env.FORCE_READER === "1";
 
@@ -130,7 +132,7 @@ function validateNumbers(numbers, sourceName) {
   }
 }
 
-async function download(url, headers = []) {
+async function download(url, headers = [], userAgent = SOURCE_USER_AGENT) {
   const args = [
     "--fail",
     "--silent",
@@ -144,7 +146,7 @@ async function download(url, headers = []) {
     "--max-time",
     "60",
     "--user-agent",
-    USER_AGENT,
+    userAgent,
   ];
   for (const header of headers) {
     args.push("--header", header);
@@ -198,10 +200,11 @@ async function fetchSourceData(source) {
   }
 
   try {
-    const readerContent = await download(`${READER_PREFIX}${source.url}`, [
-      "Accept: text/plain",
-      "X-No-Cache: true",
-    ]);
+    const readerContent = await download(
+      `${READER_PREFIX}${source.url}`,
+      ["Accept: text/plain", "X-No-Cache: true"],
+      READER_USER_AGENT,
+    );
     return parseSourcePage(
       new TextDecoder("utf-8").decode(readerContent),
       source,
