@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-07-30T21:35:35.987Z",
+  "actualizado": "2026-07-31T03:55:17.499Z",
   "criterio": "CABEZA > primeros 5 números",
   "atrasados": {
     "jujuy": {
@@ -67,7 +67,7 @@
         "21",
         "32",
         "74",
-        "81"
+        "45"
       ]
     },
     "salta": {
@@ -86,8 +86,8 @@
       "fuente": "https://www.tujugada.com.ar/quiniela-cordoba-estadisticas.asp",
       "numeros": [
         "48",
-        "94",
         "04",
+        "94",
         "05",
         "02"
       ]
@@ -110,8 +110,8 @@
         "06",
         "68",
         "20",
-        "95",
-        "54"
+        "54",
+        "95"
       ]
     }
   }
