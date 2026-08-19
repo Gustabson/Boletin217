@@ -39,6 +39,8 @@ const READER_USER_AGENT =
   "Boletin217Bot/1.0 (+https://github.com/Gustabson/Boletin217)";
 const READER_PREFIX = "https://r.jina.ai/";
 const FORCE_READER = process.env.FORCE_READER === "1";
+const SOURCE_ATTEMPTS = 2;
+const SOURCE_RETRY_DELAY_MS = 30_000;
 
 const scriptDir = path.dirname(fileURLToPath(import.meta.url));
 const outputPath = path.resolve(scriptDir, "..", "datos.json");
@@ -216,6 +218,28 @@ async function fetchSourceData(source) {
   }
 }
 
+async function fetchSourceDataWithRetry(source) {
+  let lastError;
+
+  for (let attempt = 1; attempt <= SOURCE_ATTEMPTS; attempt += 1) {
+    try {
+      return await fetchSourceData(source);
+    } catch (error) {
+      lastError = error;
+      if (attempt < SOURCE_ATTEMPTS) {
+        console.warn(
+          `${source.name}: el intento ${attempt} falló; reintentando en ${SOURCE_RETRY_DELAY_MS / 1000} segundos.`,
+        );
+        await new Promise((resolve) =>
+          setTimeout(resolve, SOURCE_RETRY_DELAY_MS),
+        );
+      }
+    }
+  }
+
+  throw lastError;
+}
+
 async function readExistingData() {
   try {
     return JSON.parse(await readFile(outputPath, "utf8"));
@@ -239,7 +263,7 @@ function sameNumbers(previous, current) {
 }
 
 async function main() {
-  const results = await Promise.all(SOURCES.map(fetchSourceData));
+  const results = await Promise.all(SOURCES.map(fetchSourceDataWithRetry));
 
   const data = {
     actualizado: new Date().toISOString(),
