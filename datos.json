@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-08-19T14:56:06.290Z",
+  "actualizado": "2026-08-19T16:50:56.750Z",
   "criterio": "CABEZA > primeros 5 números",
   "atrasados": {
     "jujuy": {
@@ -65,8 +65,8 @@
       "numeros": [
         "89",
         "21",
-        "74",
         "32",
+        "74",
         "94"
       ]
     },
