@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-08-29T16:46:48.008Z",
+  "actualizado": "2026-08-29T20:58:51.604Z",
   "criterio": "CABEZA > primeros 5 números",
   "atrasados": {
     "jujuy": {
@@ -29,10 +29,10 @@
       "fuente": "https://www.tujugada.com.ar/quiniela-cordoba-estadisticas.asp",
       "numeros": [
         "17",
-        "45",
         "49",
         "28",
-        "88"
+        "88",
+        "57"
       ]
     },
     "ciudad": {
@@ -63,8 +63,8 @@
       "nombre": "JUJUY",
       "fuente": "https://www.tujugada.com.ar/tombola-jujuy-estadisticas.asp",
       "numeros": [
-        "21",
         "89",
+        "21",
         "32",
         "74",
         "81"
@@ -77,8 +77,8 @@
         "39",
         "66",
         "96",
-        "01",
-        "70"
+        "70",
+        "01"
       ]
     },
     "cordoba": {
@@ -96,8 +96,8 @@
       "nombre": "CIUDAD",
       "fuente": "https://www.tujugada.com.ar/quiniela-nacional-estadisticas.asp",
       "numeros": [
-        "41",
         "10",
+        "41",
         "11",
         "19",
         "50"
@@ -107,8 +107,8 @@
       "nombre": "PROVINCIA",
       "fuente": "https://www.tujugada.com.ar/quiniela-provincia-buenos-aires-estadisticas.asp",
       "numeros": [
-        "68",
         "06",
+        "68",
         "20",
         "95",
         "54"
