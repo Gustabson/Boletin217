@@ -1,16 +1,16 @@
 {
-  "actualizado": "2026-09-15T21:28:14.758Z",
+  "actualizado": "2026-09-16T00:28:01.789Z",
   "criterio": "CABEZA > primeros 5 números",
   "atrasados": {
     "jujuy": {
       "nombre": "JUJUY",
       "fuente": "https://www.tujugada.com.ar/tombola-jujuy-estadisticas.asp",
       "numeros": [
-        "48",
         "80",
         "01",
         "71",
-        "17"
+        "17",
+        "86"
       ]
     },
     "salta": {
@@ -32,7 +32,7 @@
         "88",
         "09",
         "98",
-        "96"
+        "27"
       ]
     },
     "ciudad": {
