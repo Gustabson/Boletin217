@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-09-18T17:43:18.974Z",
+  "actualizado": "2026-09-18T20:58:59.716Z",
   "criterio": "CABEZA > primeros 5 números",
   "atrasados": {
     "jujuy": {
@@ -17,11 +17,11 @@
       "nombre": "SALTA",
       "fuente": "https://www.tujugada.com.ar/quiniela-salta-estadisticas.asp",
       "numeros": [
-        "78",
         "26",
         "69",
         "74",
-        "52"
+        "52",
+        "86"
       ]
     },
     "cordoba": {
@@ -66,8 +66,8 @@
         "21",
         "89",
         "74",
-        "32",
-        "94"
+        "94",
+        "32"
       ]
     },
     "salta": {
@@ -110,8 +110,8 @@
         "06",
         "68",
         "20",
-        "54",
-        "95"
+        "95",
+        "54"
       ]
     }
   }
