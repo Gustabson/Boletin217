@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-09-25T13:55:31.317Z",
+  "actualizado": "2026-09-25T18:42:53.496Z",
   "criterio": "CABEZA > primeros 5 números",
   "atrasados": {
     "jujuy": {
@@ -66,8 +66,8 @@
         "21",
         "89",
         "74",
-        "81",
-        "94"
+        "32",
+        "81"
       ]
     },
     "salta": {
@@ -107,9 +107,9 @@
       "nombre": "PROVINCIA",
       "fuente": "https://www.tujugada.com.ar/quiniela-provincia-buenos-aires-estadisticas.asp",
       "numeros": [
+        "06",
         "20",
         "68",
-        "06",
         "54",
         "95"
       ]
