@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-10-03T21:25:50.550Z",
+  "actualizado": "2026-10-04T00:44:27.787Z",
   "criterio": "CABEZA > primeros 5 números",
   "atrasados": {
     "jujuy": {
@@ -108,10 +108,10 @@
       "fuente": "https://www.tujugada.com.ar/quiniela-provincia-buenos-aires-estadisticas.asp",
       "numeros": [
         "68",
-        "20",
         "06",
-        "95",
-        "54"
+        "20",
+        "54",
+        "95"
       ]
     }
   }
