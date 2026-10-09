@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-10-08T19:59:32.575Z",
+  "actualizado": "2026-10-09T00:27:46.076Z",
   "criterio": "CABEZA > primeros 5 números",
   "atrasados": {
     "jujuy": {
@@ -7,10 +7,10 @@
       "fuente": "https://www.tujugada.com.ar/tombola-jujuy-estadisticas.asp",
       "numeros": [
         "01",
-        "71",
         "86",
         "89",
-        "92"
+        "92",
+        "09"
       ]
     },
     "salta": {
@@ -29,10 +29,10 @@
       "fuente": "https://www.tujugada.com.ar/quiniela-cordoba-estadisticas.asp",
       "numeros": [
         "88",
-        "09",
         "98",
         "36",
-        "60"
+        "60",
+        "24"
       ]
     },
     "ciudad": {
