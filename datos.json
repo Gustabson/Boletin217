@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-10-28T16:42:49.359Z",
+  "actualizado": "2026-10-28T22:41:41.276Z",
   "criterio": "CABEZA > primeros 5 números",
   "atrasados": {
     "jujuy": {
@@ -28,11 +28,11 @@
       "nombre": "CORDOBA",
       "fuente": "https://www.tujugada.com.ar/quiniela-cordoba-estadisticas.asp",
       "numeros": [
-        "89",
         "41",
         "85",
         "49",
-        "30"
+        "30",
+        "95"
       ]
     },
     "ciudad": {
@@ -111,7 +111,7 @@
         "68",
         "06",
         "54",
-        "93"
+        "95"
       ]
     }
   }
