@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-03T19:35:54.178Z",
+  "actualizado": "2026-11-04T00:40:09.304Z",
   "criterio": "CABEZA > primeros 5 números",
   "atrasados": {
     "jujuy": {
@@ -54,7 +54,7 @@
         "70",
         "22",
         "36",
-        "76"
+        "85"
       ]
     }
   },
@@ -74,9 +74,9 @@
       "nombre": "SALTA",
       "fuente": "https://www.tujugada.com.ar/quiniela-salta-estadisticas.asp",
       "numeros": [
+        "66",
         "39",
         "47",
-        "66",
         "96",
         "70"
       ]
@@ -107,11 +107,11 @@
       "nombre": "PROVINCIA",
       "fuente": "https://www.tujugada.com.ar/quiniela-provincia-buenos-aires-estadisticas.asp",
       "numeros": [
-        "20",
         "68",
+        "20",
         "06",
-        "54",
-        "95"
+        "95",
+        "54"
       ]
     }
   }
