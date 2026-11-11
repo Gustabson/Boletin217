@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-11T01:58:49.754Z",
+  "actualizado": "2026-11-11T17:56:01.933Z",
   "criterio": "CABEZA > primeros 5 números",
   "atrasados": {
     "jujuy": {
@@ -19,9 +19,9 @@
       "numeros": [
         "26",
         "34",
-        "27",
         "10",
-        "01"
+        "01",
+        "29"
       ]
     },
     "cordoba": {
@@ -67,7 +67,7 @@
         "89",
         "94",
         "74",
-        "44"
+        "32"
       ]
     },
     "salta": {
