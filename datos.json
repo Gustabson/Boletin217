@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-15T22:57:20.578Z",
+  "actualizado": "2026-11-16T18:39:49.787Z",
   "criterio": "CABEZA > primeros 5 números",
   "atrasados": {
     "jujuy": {
@@ -75,8 +75,8 @@
       "fuente": "https://www.tujugada.com.ar/quiniela-salta-estadisticas.asp",
       "numeros": [
         "39",
-        "47",
         "66",
+        "47",
         "96",
         "70"
       ]
