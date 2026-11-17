@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-16T18:39:49.787Z",
+  "actualizado": "2026-11-17T02:58:41.827Z",
   "criterio": "CABEZA > primeros 5 números",
   "atrasados": {
     "jujuy": {
@@ -7,10 +7,10 @@
       "fuente": "https://www.tujugada.com.ar/tombola-jujuy-estadisticas.asp",
       "numeros": [
         "01",
-        "55",
         "87",
         "19",
-        "43"
+        "43",
+        "34"
       ]
     },
     "salta": {
@@ -75,8 +75,8 @@
       "fuente": "https://www.tujugada.com.ar/quiniela-salta-estadisticas.asp",
       "numeros": [
         "39",
-        "66",
         "47",
+        "66",
         "96",
         "70"
       ]
